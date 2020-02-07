@@ -1,21 +1,23 @@
 import React, { FunctionComponent, useState } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
+import { PHONE_SIGN_IN } from './Phone.query';
 import Helmet from 'react-helmet';
+import { toast } from 'react-toastify';
 import BackArrow from '../../components/BlackArrow';
 import Input from '../../components/Input/Input';
 import countries from '../../countries';
 import style from './PhoneLogin.module.scss';
-import { RouteComponentProps } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { PHONE_SIGN_IN } from './Phone.query';
-import { useMutation } from '@apollo/react-hooks';
+import Loader from '../../components/Loader';
+import { startPhoneVerification } from '../../types/api';
 
 interface IProps extends RouteComponentProps<any> {}
 
 const PhoneLoginContainer: FunctionComponent<IProps> = () => {
-  const [countryCode, setCountryCode] = useState('+7');
+  const [countryCode, setCountryCode] = useState('+82');
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const [startPhoneVerification, { data, loading }] = useMutation(PHONE_SIGN_IN);
+  const [startPhoneVerification, { loading }] = useMutation(PHONE_SIGN_IN);
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
     event.preventDefault();
@@ -23,6 +25,7 @@ const PhoneLoginContainer: FunctionComponent<IProps> = () => {
     const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
     if (isValid) {
       startPhoneVerification({
+        update: afterSubmit,
         variables: {
           phoneNumber: phone
         }
@@ -32,9 +35,16 @@ const PhoneLoginContainer: FunctionComponent<IProps> = () => {
     }
   };
 
-  if (loading) {
-    return <p>Loading...</p>
-  }
+  const afterSubmit = (cache, result: any) => {
+    const data: startPhoneVerification = result.data;
+    const { StartPhoneVerification } = data;
+    if (StartPhoneVerification?.ok) {
+      toast.success('SMS will be send. Check your phone');
+      return;
+    } else {
+      toast.error(StartPhoneVerification?.error);
+    }
+  };
 
   return (
     <div className={style.PhoneLogin}>
@@ -63,15 +73,18 @@ const PhoneLoginContainer: FunctionComponent<IProps> = () => {
           placeholder={"(999) 999 99 99"}
         />
         <button className={style.Button}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill={"white"}
-          >
-            <path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z"/>
-          </svg>
+          { loading ?
+            <Loader /> :
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill={"white"}
+            >
+              <path d="M7.33 24l-2.83-2.829 9.339-9.175-9.339-9.167 2.83-2.829 12.17 11.996z"/>
+            </svg>
+          }
         </button>
       </form>
     </div>
