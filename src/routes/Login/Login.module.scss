@@ -1,0 +1,54 @@
+.Login {
+  height: 100vh;
+}
+
+.Header {
+  height: 70%;
+  background: linear-gradient(rgba(0, 153, 196, 0.5), rgba(0, 153, 196, 0.4)),
+  url('../../images/bg.png');
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Logo {
+  width: 110px;
+  height: 110px;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 -14px 28px rgba(0, 0, 0, 0.22);
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 25px;
+}
+
+.Subtitle {
+  font-size: 30px;
+}
+
+.FakeInput {
+  margin: 50px 0;
+  font-size: 25px;
+  font-weight: 300;
+}
+
+.PhoneLogin {
+  padding: 20px;
+}
+
+.Grey {
+  color: var(--greyColor);
+  margin-left: 10px;
+}
+
+.SocialLogin {
+  border-top: 1px solid var(--greyColor);
+  padding: 30px 20px;
+}
+
+.SocialLink {
+  color: var(--blueColor);
+  font-size: 20px;
+}
