@@ -5,7 +5,7 @@ interface IProps {
   placeholder?: string;
   type?: string;
   required?: boolean;
-  name: string;
+  name?: string;
   value: any;
   onChange: React.ChangeEventHandler<HTMLInputElement>
 }

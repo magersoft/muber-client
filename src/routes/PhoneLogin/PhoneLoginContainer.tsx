@@ -13,19 +13,19 @@ import { startPhoneVerification } from '../../types/api';
 
 interface IProps extends RouteComponentProps<any> {}
 
-const PhoneLoginContainer: FunctionComponent<IProps> = () => {
+const PhoneLoginContainer: FunctionComponent<IProps> = ({ history }) => {
   const [countryCode, setCountryCode] = useState('+82');
   const [phoneNumber, setPhoneNumber] = useState('');
 
   const [startPhoneVerification, { loading }] = useMutation(PHONE_SIGN_IN);
 
-  const onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (event): void => {
     event.preventDefault();
     const phone = `${countryCode}${phoneNumber}`;
     const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
     if (isValid) {
       startPhoneVerification({
-        update: afterSubmit,
+        update: completed,
         variables: {
           phoneNumber: phone
         }
@@ -35,11 +35,20 @@ const PhoneLoginContainer: FunctionComponent<IProps> = () => {
     }
   };
 
-  const afterSubmit = (cache, result: any) => {
+  const completed = (_, result: any): void => {
     const data: startPhoneVerification = result.data;
     const { StartPhoneVerification } = data;
+    const phone = `${countryCode}${phoneNumber}`;
     if (StartPhoneVerification?.ok) {
       toast.success('SMS will be send. Check your phone');
+      setTimeout(() => {
+        history.push({
+          pathname: '/verify-phone',
+          state: {
+            phone
+          }
+        });
+      }, 1500);
       return;
     } else {
       toast.error(StartPhoneVerification?.error);
