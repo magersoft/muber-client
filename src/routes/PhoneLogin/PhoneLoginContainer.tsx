@@ -6,6 +6,8 @@ import countries from '../../countries';
 import style from './PhoneLogin.module.scss';
 import { RouteComponentProps } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { PHONE_SIGN_IN } from './Phone.query';
+import { useMutation } from '@apollo/react-hooks';
 
 interface IProps extends RouteComponentProps<any> {}
 
@@ -13,16 +15,26 @@ const PhoneLoginContainer: FunctionComponent<IProps> = () => {
   const [countryCode, setCountryCode] = useState('+7');
   const [phoneNumber, setPhoneNumber] = useState('');
 
+  const [startPhoneVerification, { data, loading }] = useMutation(PHONE_SIGN_IN);
+
   const onSubmit: React.FormEventHandler<HTMLFormElement> = event => {
     event.preventDefault();
     const phone = `${countryCode}${phoneNumber}`;
     const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
     if (isValid) {
-      return;
+      startPhoneVerification({
+        variables: {
+          phoneNumber: phone
+        }
+      });
     } else {
       toast.error('Please write valid phone number');
     }
   };
+
+  if (loading) {
+    return <p>Loading...</p>
+  }
 
   return (
     <div className={style.PhoneLogin}>
