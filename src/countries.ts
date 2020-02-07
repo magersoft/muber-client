@@ -206,7 +206,6 @@ const countries = [
   { name: "Japan", dial_code: "+81", code: "JP", flag: "🇯🇵" },
   { name: "Jersey", dial_code: "+44", code: "JE", flag: "🇯🇪" },
   { name: "Jordan", dial_code: "+962", code: "JO", flag: "🇯🇴" },
-  { name: "Kazakhstan", dial_code: "+7", code: "KZ", flag: "🇰🇿" },
   { name: "Kenya", dial_code: "+254", code: "KE", flag: "🇰🇪" },
   { name: "Kiribati", dial_code: "+686", code: "KI", flag: "🇰🇮" },
   {
