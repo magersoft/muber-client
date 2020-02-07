@@ -2,6 +2,28 @@
 
 Learning and practice on really project
 
+## Screens:
+
+### Logged Out: 
+
+- [ ] Home
+- [ ] Phone Login
+- [ ] Verify Phone Number
+- [ ] Social Login
+
+### Logged In:
+
+- [ ] Home
+- [ ] Ride
+- [ ] Edit Account
+- [ ] Settings
+- [ ] Saved Places
+- [ ] Add Place
+- [ ] Find Address
+- [ ] Challenge: Ride History
+    
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
