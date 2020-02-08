@@ -19,6 +19,7 @@ export const USER_PROFILE = gql`
         email
         profilePhoto
         isDriving
+        darkTheme
       }
     }
   }

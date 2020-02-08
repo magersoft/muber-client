@@ -1,5 +1,6 @@
 .Menu {
   height: 100%;
+  background-color: var(--mainBackground);
 }
 
 .Header {
@@ -53,5 +54,16 @@
 
   &.isDriving {
     background-color: var(--yellowColor);
+  }
+}
+
+.ThemeSwitcher {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 10px;
+
+  label {
+    margin-left: 5px;
   }
 }

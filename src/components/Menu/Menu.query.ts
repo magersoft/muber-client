@@ -8,3 +8,12 @@ export const TOGGLE_DRIVING_MODE = gql`
     }
   }
 `;
+
+export const TOGGLE_THEME_MODE = gql`
+  mutation toggleThemeMode {
+    ToggleThemeMode {
+      ok
+      error
+    }
+  }
+`;

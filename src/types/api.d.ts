@@ -21,6 +21,24 @@ export interface toggleDrivingMode {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: toggleThemeMode
+// ====================================================
+
+export interface toggleThemeMode_ToggleThemeMode {
+  __typename: "ToggleThemeModeResponse";
+  ok: boolean;
+  error: string | null;
+}
+
+export interface toggleThemeMode {
+  ToggleThemeMode: toggleThemeMode_ToggleThemeMode;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: updateProfile
 // ====================================================
 
@@ -39,6 +57,7 @@ export interface updateProfileVariables {
   lastName?: string | null;
   email?: string | null;
   password?: string | null;
+  profilePhoto?: string | null;
   age?: number | null;
 }
 

@@ -69,7 +69,7 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
   };
 
   const uploadPhoto: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
-    const { target: { name, value, files } } = event;
+    const { target: { files } } = event;
     if (files) {
       setUploading(true);
       const formData = new FormData();

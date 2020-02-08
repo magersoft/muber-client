@@ -1,23 +1,30 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import style from './Menu.module.scss';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
-import { TOGGLE_DRIVING_MODE } from './Menu.query';
+import { TOGGLE_DRIVING_MODE, TOGGLE_THEME_MODE } from './Menu.query';
 import { USER_PROFILE } from '../../shared.queries';
-import { toggleDrivingMode } from '../../types/api';
+import { toggleDrivingMode, toggleThemeMode } from '../../types/api';
 import { toast } from 'react-toastify';
+import ThemeSwitcher from 'react-css-vars';
+import Toggle from 'react-toggle';
+import 'react-toggle/style.css';
+import light from '../../theme/light.theme';
+import dark from '../../theme/dark.theme';
 
 interface IProps {
   user: {
     fullName: string;
     profilePhoto: string;
     isDriving: boolean;
+    darkTheme: boolean;
   }
 }
 
 const Menu: FunctionComponent<IProps> = ({ user }) => {
-  const { fullName, profilePhoto, isDriving } = user;
+  const { fullName, profilePhoto, isDriving, darkTheme } = user;
   const [toggleDrivingMode] = useMutation(TOGGLE_DRIVING_MODE);
+  const [toggleThemeMode] = useMutation(TOGGLE_THEME_MODE);
 
   const picture = profilePhoto ? profilePhoto : 'https://yt3.ggpht.com/-CTwXMuZRaWw/AAAAAAAAAAI/AAAAAAAAAAA/HTJy-KJ4F2c/s88-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
@@ -35,6 +42,26 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
         const { GetMyProfile: { user } } = query;
         if (user) {
           user.isDriving = !isDriving;
+        }
+        cache.writeQuery({ query: USER_PROFILE, data: query });
+      }
+    })
+  };
+
+  const darkModeHandler = () => {
+    toggleThemeMode({
+      update: (cache, result: any) => {
+        const data: toggleThemeMode = result.data;
+        const { ToggleThemeMode } = data;
+        if (!ToggleThemeMode.ok) {
+          toast.error(ToggleThemeMode.error);
+          return;
+        }
+        const query = cache.readQuery({ query: USER_PROFILE });
+        // @ts-ignore
+        const { GetMyProfile: { user } } = query;
+        if (user) {
+          user.darkTheme = !darkTheme;
         }
         cache.writeQuery({ query: USER_PROFILE, data: query });
       }
@@ -66,6 +93,15 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
       >
         { isDriving ? 'Stop Driving' : 'Start Driving' }
       </button>
+      <div className={style.ThemeSwitcher}>
+        <Toggle
+          id="theme-switcher"
+          defaultChecked={!darkTheme}
+          onChange={darkModeHandler}
+        />
+        <label htmlFor="theme-switcher">Dark Mode</label>
+      </div>
+      <ThemeSwitcher theme={darkTheme ? light : dark} />
     </div>
   )
 };

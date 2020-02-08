@@ -1,5 +1,4 @@
 @import '~reset-css';
-@import 'theme/color';
 @import url('https://fonts.googleapis.com/css?family=Maven+Pro&display=swap');
 
 * {
@@ -8,6 +7,8 @@
 
 body {
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+  background-color: var(--mainBackground);
+  color: var(--mainColor);
 }
 
 a {
