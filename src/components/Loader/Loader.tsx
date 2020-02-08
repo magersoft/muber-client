@@ -1,6 +1,14 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 import style from './Loader.module.scss';
 
-const Loader = () => <div className={style.Loader}><div/><div/><div/><div/></div>;
+type LoaderColor = 'primary' | 'secondary' | 'light' | 'dark'
+
+interface IProps {
+  color?: LoaderColor
+  className?: string
+}
+
+const Loader: FunctionComponent<IProps> = ({ color = 'light', className }) =>
+  <div className={`${style.Loader} ${style[color]} ${className}`}><div/><div/></div>;
 
 export default Loader;

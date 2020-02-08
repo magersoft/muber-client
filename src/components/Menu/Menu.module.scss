@@ -1,0 +1,56 @@
+.Menu {
+  height: 100%;
+}
+
+.Header {
+  background-color: black;
+  height: 20%;
+  margin-bottom: 30px;
+  padding: 0 15px;
+  color: white;
+}
+
+.Grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 10px;
+  height: 100%;
+  align-items: center;
+}
+
+.SLink {
+  font-size: 22px;
+  display: block;
+  margin-left: 15px;
+  margin-bottom: 25px;
+  font-weight: 400;
+}
+
+.Image {
+  height: 80px;
+  width: 80px;
+  background-color: grey;
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+.About {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ToggleDriving {
+  -webkit-appearance: none;
+  background-color: var(--greenColor);
+  width: 100%;
+  color: white;
+  font-size: 18px;
+  border: 0;
+  padding: 15px 0;
+  cursor: pointer;
+
+  &.isDriving {
+    background-color: var(--yellowColor);
+  }
+}

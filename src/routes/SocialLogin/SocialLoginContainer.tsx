@@ -9,6 +9,7 @@ import { facebookConnect } from '../../types/api';
 import { RouteComponentProps } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LOG_USER_IN } from '../../shared.queries';
+import Loader from '../../components/Loader';
 
 interface IProps extends RouteComponentProps<any> {}
 
@@ -93,6 +94,11 @@ const SocialLoginContainer: FunctionComponent<IProps> = () => {
         </span>
         )}
       />
+      { loading ?
+        <div className={style.FbLoader}>
+          <Loader color={'dark'} />
+        </div> : null
+      }
     </div>
   )
 };
