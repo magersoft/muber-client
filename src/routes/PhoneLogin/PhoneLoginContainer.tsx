@@ -14,10 +14,10 @@ import { startPhoneVerification } from '../../types/api';
 interface IProps extends RouteComponentProps<any> {}
 
 const PhoneLoginContainer: FunctionComponent<IProps> = ({ history }) => {
-  const [countryCode, setCountryCode] = useState('+82');
-  const [phoneNumber, setPhoneNumber] = useState('');
+  const [countryCode, setCountryCode] = useState<string>('+7');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
 
-  const [startPhoneVerification, { loading }] = useMutation(PHONE_SIGN_IN);
+  const [startPhoneVerification, { loading }] = useMutation<startPhoneVerification>(PHONE_SIGN_IN);
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event): void => {
     event.preventDefault();
