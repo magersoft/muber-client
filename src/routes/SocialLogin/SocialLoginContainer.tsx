@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import Helmet from 'react-helmet';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 import BackArrow from '../../components/BlackArrow';

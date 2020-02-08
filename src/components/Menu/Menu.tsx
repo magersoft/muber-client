@@ -1,10 +1,11 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import style from './Menu.module.scss';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 import { TOGGLE_DRIVING_MODE } from './Menu.query';
-import { toast } from 'react-toastify';
+import { USER_PROFILE } from '../../shared.queries';
 import { toggleDrivingMode } from '../../types/api';
+import { toast } from 'react-toastify';
 
 interface IProps {
   user: {
@@ -16,21 +17,26 @@ interface IProps {
 
 const Menu: FunctionComponent<IProps> = ({ user }) => {
   const { fullName, profilePhoto, isDriving } = user;
-  const [isDrivingState, setDrivingState] = useState<boolean>(isDriving);
   const [toggleDrivingMode] = useMutation(TOGGLE_DRIVING_MODE);
 
   const picture = profilePhoto ? profilePhoto : 'https://yt3.ggpht.com/-CTwXMuZRaWw/AAAAAAAAAAI/AAAAAAAAAAA/HTJy-KJ4F2c/s88-c-k-no-mo-rj-c0xffffff/photo.jpg';
 
   const toggleDrivingModeHandler = (): void => {
     toggleDrivingMode({
-      update: (_, result: any) => {
+      update: (cache, result: any) => {
         const data: toggleDrivingMode = result.data;
         const { ToggleDrivingMode } = data;
-        if (ToggleDrivingMode.ok) {
-          setDrivingState(!isDrivingState);
-        } else {
+        if (!ToggleDrivingMode.ok) {
           toast.error(ToggleDrivingMode.error);
+          return;
         }
+        const query = cache.readQuery({ query: USER_PROFILE });
+        // @ts-ignore
+        const { GetMyProfile: { user } } = query;
+        if (user) {
+          user.isDriving = !isDriving;
+        }
+        cache.writeQuery({ query: USER_PROFILE, data: query });
       }
     })
   };
@@ -56,9 +62,9 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
       <Link to={'/settings'} className={style.SLink}>Settings</Link>
       <button
         onClick={toggleDrivingModeHandler}
-        className={`${style.ToggleDriving} ${isDrivingState ? style.isDriving : null}`}
+        className={`${style.ToggleDriving} ${isDriving ? style.isDriving : null}`}
       >
-        { isDrivingState ? 'Stop Driving' : 'Start Driving' }
+        { isDriving ? 'Stop Driving' : 'Start Driving' }
       </button>
     </div>
   )
