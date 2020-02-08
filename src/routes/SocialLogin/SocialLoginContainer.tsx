@@ -14,32 +14,19 @@ import Loader from '../../components/Loader';
 interface IProps extends RouteComponentProps<any> {}
 
 const SocialLoginContainer: FunctionComponent<IProps> = () => {
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [fbId, setFbId] = useState<string>('');
-
   const [facebookLogin, { loading }] = useMutation<facebookConnect>(FACEBOOK_CONNECT);
   const [logUserIn] = useMutation(LOG_USER_IN);
 
-  const setFbState = (fbData): void => {
-    const { email, first_name, last_name, id } = fbData;
-    setFirstName(first_name);
-    setLastName(last_name);
-    setEmail(email);
-    setFbId(id);
-  };
-
   const facebookLoginHandler = (fbData): void => {
-    setFbState(fbData);
-    if (fbData.accessToken) {
-      toast.success(`Welcome, ${fbData.name}`);
+    const { email, first_name, last_name, id, accessToken, name } = fbData;
+    if (accessToken) {
+      toast.success(`Welcome, ${name}`);
       facebookLogin({
         variables: {
-          firstName,
-          lastName,
           email,
-          fbId
+          firstName: first_name,
+          lastName: last_name,
+          fbId: id
         },
         update: (_, result: any) => {
           const data: facebookConnect = result.data;
