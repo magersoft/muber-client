@@ -86,6 +86,7 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
         </div>
       </div>
       <Link to={'/trips'} className={style.SLink}>Your Trips</Link>
+      <Link to={'/places'} className={style.SLink}>Places</Link>
       <Link to={'/settings'} className={style.SLink}>Settings</Link>
       <button
         onClick={toggleDrivingModeHandler}

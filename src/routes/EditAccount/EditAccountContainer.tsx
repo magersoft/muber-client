@@ -16,12 +16,6 @@ import style from './EditAccount.module.scss';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    buttonSuccess: {
-      backgroundColor: green[500],
-      '&:hover': {
-        backgroundColor: green[700],
-      },
-    },
     buttonProgress: {
       color: green[500],
       position: 'absolute',
@@ -197,7 +191,7 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
           }}
         />
         <TextField
-          label="Password"
+          label="New Password"
           type={state.showPassword ? 'text' : 'password'}
           value={password}
           onChange={handleChange('password')}
@@ -221,7 +215,6 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
             variant="contained"
             color="primary"
             disabled={updateLoading}
-            className={classes.buttonSuccess}
           >
             Update My Profile
           </Button>

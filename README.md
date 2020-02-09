@@ -15,10 +15,9 @@ Learning and practice on really project
 
 - [ ] Home
 - [ ] Ride
-- [ ] Edit Account
-- [ ] Settings
-- [ ] Saved Places
-- [ ] Add Place
+- [x] Edit Account
+- [x] Settings
+- [x] Add Place
 - [ ] Find Address
 - [ ] Challenge: Ride History
     

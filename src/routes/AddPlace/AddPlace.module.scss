@@ -1,0 +1,15 @@
+.AddPlace {
+  padding: 0 40px;
+  margin-top: 2rem;
+}
+
+.Form {
+  display: flex;
+  flex-direction: column;
+  > div {
+    margin-bottom: 2rem;
+  }
+  > button {
+    margin: 1rem 0;
+  }
+}

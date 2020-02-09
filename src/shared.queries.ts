@@ -6,6 +6,12 @@ export const LOG_USER_IN = gql`
   }
 `;
 
+export const LOG_USER_OUT = gql`
+  mutation logUserOut {
+    logUserOut @client
+  }
+`;
+
 export const USER_PROFILE = gql`
   query getUserProfile {
     GetMyProfile {
@@ -20,6 +26,21 @@ export const USER_PROFILE = gql`
         profilePhoto
         isDriving
         darkTheme
+      }
+    }
+  }
+`;
+
+export const GET_PLACES = gql`
+  query getPlaces {
+    GetMyPlaces {
+      ok
+      error
+      places {
+        id
+        name
+        address
+        isFavorite
       }
     }
   }
