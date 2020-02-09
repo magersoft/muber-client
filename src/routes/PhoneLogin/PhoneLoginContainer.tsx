@@ -9,18 +9,31 @@ import Input from '../../components/Input/Input';
 import countries from '../../countries';
 import style from './PhoneLogin.module.scss';
 import { startPhoneVerification } from '../../types/api';
+import { Select } from '@material-ui/core';
 
 interface IProps extends RouteComponentProps<any> {}
 
+interface IState {
+  countryCode: string;
+  phoneNumber: string;
+}
+
 const PhoneLoginContainer: FunctionComponent<IProps> = ({ history }) => {
-  const [countryCode, setCountryCode] = useState<string>('+7');
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const [state, setState] = useState<IState>({
+    countryCode: '+7',
+    phoneNumber: ''
+  });
+  const phone = `${state.countryCode}${state.phoneNumber}`;
 
   const [startPhoneVerification, { loading }] = useMutation<startPhoneVerification>(PHONE_SIGN_IN);
 
+  const handleChange = (prop: keyof IState) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | { value: unknown }>) => {
+      setState({ ...state, [prop]: event.target.value });
+  };
+
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event): void => {
     event.preventDefault();
-    const phone = `${countryCode}${phoneNumber}`;
     const isValid = /^\+[1-9]{1}[0-9]{7,11}$/.test(phone);
     if (isValid) {
       startPhoneVerification({
@@ -37,7 +50,6 @@ const PhoneLoginContainer: FunctionComponent<IProps> = ({ history }) => {
   const completed = (_, result: any): void => {
     const data: startPhoneVerification = result.data;
     const { StartPhoneVerification } = data;
-    const phone = `${countryCode}${phoneNumber}`;
     if (StartPhoneVerification?.ok) {
       toast.success('SMS will be send. Check your phone');
       setTimeout(() => {
@@ -61,24 +73,23 @@ const PhoneLoginContainer: FunctionComponent<IProps> = ({ history }) => {
       </Helmet>
       <BackArrow backTo={"/"} className={style.BlackArrow}/>
       <h2 className={style.Title}>Enter your mobile number</h2>
-      <select
-        name="countryCode"
-        value={countryCode}
-        onChange={event => setCountryCode(event.target.value)}
-        className={style.CountrySelect}
+      <Select
+        native
+        value={state.countryCode}
+        onChange={handleChange('countryCode')}
       >
         {countries.map((country, index) => (
           <option key={index} value={country.dial_code}>
             {country.flag} {country.name} ({country.dial_code})
           </option>
         ))}
-      </select>
+      </Select>
       <form onSubmit={onSubmit}>
         <Input
-          value={phoneNumber}
-          onChange={event => setPhoneNumber(event.target.value)}
-          name="phoneNumber"
+          value={state.phoneNumber}
+          onChange={handleChange('phoneNumber')}
           placeholder={"(999) 999 99 99"}
+          className={style.Input}
         />
         <button className={style.Button}>
           { loading ?

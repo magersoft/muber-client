@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import { Link } from 'react-router-dom';
 import style from './BlackArrow.module.scss';
+import { IconButton } from '@material-ui/core';
+import { ArrowBackIos } from '@material-ui/icons';
 
 interface IProps {
   backTo: string;
@@ -10,15 +12,9 @@ interface IProps {
 const BackArrow: FunctionComponent<IProps> = ({ backTo, className }) => (
   <div className={style.BlackArrow + ' ' + className}>
     <Link to={backTo}>
-      <svg
-        width="24"
-        height="24"
-        xmlns="http://www.w3.org/2000/svg"
-        fillRule="evenodd"
-        clipRule="evenodd"
-      >
-        <path d="M20 .755l-14.374 11.245 14.374 11.219-.619.781-15.381-12 15.391-12 .609.755z" />
-      </svg>
+      <IconButton edge="start" color="inherit" aria-label="menu">
+        <ArrowBackIos />
+      </IconButton>
     </Link>
   </div>
 );

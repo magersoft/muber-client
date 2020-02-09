@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import BackArrow from '../BlackArrow';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
 import style from './Header.module.scss';
 
 interface IProps {
@@ -8,10 +9,15 @@ interface IProps {
 }
 
 const Header: FunctionComponent<IProps> = ({ title, backTo }) => (
-  <div className={style.Header}>
-    { backTo && <BackArrow backTo={backTo} /> }
-    <h2 className={style.Title}>{title}</h2>
-  </div>
+  <AppBar position="static">
+    <Toolbar>
+      { backTo && <BackArrow backTo={backTo} /> }
+      <Typography variant="h6" className={style.Header}>
+        { title }
+      </Typography>
+    </Toolbar>
+  </AppBar>
+
 );
 
 export default Header;

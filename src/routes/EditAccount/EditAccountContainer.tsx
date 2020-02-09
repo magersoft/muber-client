@@ -2,27 +2,64 @@ import React, { FunctionComponent, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import axios from 'axios';
 import Helmet from 'react-helmet';
-import Input from '../../components/Input';
+import { IconButton, InputAdornment, TextField, Button, CircularProgress, Theme, createStyles, makeStyles } from '@material-ui/core';
+import { AccountCircle, Email, InsertInvitation, Visibility, VisibilityOff } from '@material-ui/icons';
 import Header from '../../components/Header';
-import Button from '../../components/Button';
 import PhotoInput from '../../components/PhotoInput';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { USER_PROFILE } from '../../shared.queries';
 import { UPDATE_PROFILE } from './EditAccount.query';
 import { toast } from 'react-toastify';
+import { green } from '@material-ui/core/colors';
 import { updateProfile } from '../../types/api';
 import style from './EditAccount.module.scss';
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    buttonSuccess: {
+      backgroundColor: green[500],
+      '&:hover': {
+        backgroundColor: green[700],
+      },
+    },
+    buttonProgress: {
+      color: green[500],
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      marginTop: -12,
+      marginLeft: -12,
+    },
+  })
+);
+
 interface IProps extends RouteComponentProps {}
 
+interface IState {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  age: number;
+  profilePhoto: string;
+  uploading: boolean;
+  showPassword?: boolean;
+}
+
 const EditAccountContainer: FunctionComponent<IProps> = () => {
-  const [firstName, setFirstName] = useState<string>('');
-  const [lastName, setLastName] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [age, setAge] = useState<number>(0);
-  const [profilePhoto, setProfilePhoto] = useState<string>('');
-  const [uploading, setUploading] = useState<boolean>(false);
+  const classes = useStyles();
+
+  const [state, setState] = useState<IState>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    age: 0,
+    profilePhoto: '',
+    uploading: false,
+    showPassword: false
+  });
+  const { firstName, lastName, email, age, profilePhoto, password, uploading } = state;
 
   const { loading: getLoading } = useQuery(USER_PROFILE, {
     onCompleted: data => {
@@ -30,11 +67,14 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
       if (GetMyProfile.ok) {
         const { user } = GetMyProfile;
         if (user) {
-          setFirstName(user.firstName);
-          setLastName(user.lastName);
-          setEmail(user.email);
-          setAge(user.age);
-          setProfilePhoto(user.profilePhoto);
+          setState({
+            ...state,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            age: user.age,
+            profilePhoto: user.profilePhoto
+          });
         }
       } else {
         toast.error(GetMyProfile.error);
@@ -43,6 +83,10 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
   });
 
   const [updateProfile, { loading: updateLoading }] = useMutation(UPDATE_PROFILE);
+
+  const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>): void => {
+    setState({ ...state, [prop]: event.target.value });
+  };
 
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event): void => {
     event.preventDefault();
@@ -71,7 +115,7 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
   const uploadPhoto: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
     const { target: { files } } = event;
     if (files) {
-      setUploading(true);
+      setState({ uploading: true, ...state });
       const formData = new FormData();
       formData.append('file', files[0]);
       formData.append('api_key', '754293116941949');
@@ -79,8 +123,8 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
       formData.append('timestamp', String(Date.now() / 1000));
       const { data: { secure_url } } = await axios.post('https://api.cloudinary.com/v1_1/magersoft/image/upload', formData);
       if (secure_url) {
-        setUploading(false);
-        setProfilePhoto(secure_url);
+        setState({ uploading: false, ...state });
+        setState({ profilePhoto: secure_url, ...state });
       }
     }
   };
@@ -97,46 +141,92 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
           fileUrl={profilePhoto}
           onChange={uploadPhoto}
         />
-        <Input
+        <TextField
+          label="First Name"
           value={firstName}
-          onChange={event => setFirstName(event.target.value)}
-          placeholder={'First Name'}
+          onChange={handleChange('firstName')}
           disabled={getLoading}
-          className={style.Input}
+          fullWidth
+          InputProps={{
+            startAdornment:
+              <InputAdornment position="start">
+                <AccountCircle />
+              </InputAdornment>
+          }}
         />
-        <Input
+        <TextField
+          label="Last Name"
           value={lastName}
-          onChange={event => setLastName(event.target.value)}
-          placeholder={'Last Name'}
+          onChange={handleChange('lastName')}
           disabled={getLoading}
-          className={style.Input}
+          fullWidth
+          InputProps={{
+            startAdornment:
+              <InputAdornment position="start">
+                <AccountCircle />
+              </InputAdornment>
+          }}
         />
-        <Input
+        <TextField
+          label="Email"
+          type="email"
           value={email}
-          type={'email'}
-          placeholder={'Email'}
+          onChange={handleChange('email')}
           disabled={getLoading}
-          onChange={event => setEmail(event.target.value)}
-          className={style.Input}
+          fullWidth
+          InputProps={{
+            startAdornment:
+              <InputAdornment position="start">
+                <Email />
+              </InputAdornment>
+          }}
         />
-        <Input
+        <TextField
+          label="Age"
           value={age}
           type={'number'}
           placeholder={'Age'}
           disabled={getLoading}
-          onChange={event => setAge(+event.target.value)}
-          className={style.Input}
+          onChange={handleChange('age')}
+          fullWidth
+          InputProps={{
+            startAdornment:
+              <InputAdornment position="start">
+                <InsertInvitation />
+              </InputAdornment>
+          }}
         />
-        <Input
-          type={'password'}
+        <TextField
+          label="Password"
+          type={state.showPassword ? 'text' : 'password'}
           value={password}
-          placeholder={'New password'}
-          onChange={event => setPassword(event.target.value)}
-          required={false}
+          onChange={handleChange('password')}
           disabled={getLoading}
-          className={style.Input}
+          fullWidth
+          InputProps={{
+            endAdornment: <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => setState({...state, showPassword: !state.showPassword})}
+              >
+                {state.showPassword ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          }}
+
         />
-        <Button label={updateLoading ? 'Loading' : 'Update'} />
+        <div className={style.Button}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={updateLoading}
+            className={classes.buttonSuccess}
+          >
+            Update My Profile
+          </Button>
+          { updateLoading && <CircularProgress size={24} className={classes.buttonProgress} /> }
+        </div>
       </form>
     </div>
   )

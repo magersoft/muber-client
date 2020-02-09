@@ -2,8 +2,19 @@
 
 .Form {
   padding: 0 40px;
+
+  > div {
+    margin-bottom: 20px;
+  }
 }
 
 .Input {
   margin-bottom: 30px;
+}
+
+.Button {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  position: relative;
 }

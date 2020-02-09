@@ -11,6 +11,10 @@
   align-items: center;
   justify-content: center;
   position: relative;
+
+  h1 {
+    font-size: 2rem;
+  }
 }
 
 .Logo {
@@ -47,7 +51,7 @@
 }
 
 .FakeInput {
-  margin: 50px 0;
+  margin: 30px 0;
   font-size: 25px;
   font-weight: 300;
 }
