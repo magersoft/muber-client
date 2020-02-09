@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-interface IProps extends RouteComponentProps {}
+interface IProps extends RouteComponentProps<any> {}
 
 interface IState {
   firstName: string;
@@ -118,7 +118,7 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
       const { data: { secure_url } } = await axios.post('https://api.cloudinary.com/v1_1/magersoft/image/upload', formData);
       if (secure_url) {
         setState({ uploading: false, ...state });
-        setState({ profilePhoto: secure_url, ...state });
+        setState({ ...state, profilePhoto: secure_url });
       }
     }
   };

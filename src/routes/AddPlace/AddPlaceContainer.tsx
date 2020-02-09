@@ -39,8 +39,8 @@ const AddPlace: FunctionComponent<IProps> = ({ history }) => {
   const [state, setState] = useState<IState>({
     name: '',
     address: '',
-    lat: 1.23,
-    lng: 1.23,
+    lat: 0,
+    lng: 0,
     isFavorite: false
   });
 
