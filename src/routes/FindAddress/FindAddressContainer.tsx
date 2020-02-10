@@ -1,19 +1,31 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Helmet from 'react-helmet';
-import { YMaps, Map } from 'react-yandex-maps';
+import { YMaps, Map, GeolocationControl } from 'react-yandex-maps';
 import style from './FindAddress.module.scss';
+import { MAPS_APIKEY } from '../../apiKeys';
+import { geoCode, reverseGeoCode } from '../../utils/geocoder';
+import MapSearchControl from '../../components/MapSearchControl';
 
 interface IMaps {
   center: number[];
   zoom: number
 }
 
-const FindAddress: FunctionComponent<any> = (props) => {
-  const [state, setState] = useState<IMaps>({
+interface IState {
+  address: string;
+  searchingValue: string;
+}
+
+const FindAddress: FunctionComponent<any> = () => {
+  const [mapState, setMapState] = useState<IMaps>({
     center: [0, 0],
     zoom: 14
   });
-  const [map, setMap] = useState<any>({});
+  const [state, setState] = useState<IState>({
+    address: '',
+    searchingValue: ''
+  });
+  const [instanceMap, setInstanceMap] = useState<any>({});
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
@@ -21,19 +33,45 @@ const FindAddress: FunctionComponent<any> = (props) => {
 
   const handleGeoSuccess = (position: Position) => {
     const { coords: { latitude, longitude } } = position;
-    setState({
-      ...state,
+    setMapState({
+      ...mapState,
       center: [latitude, longitude]
     });
+    getAddressFromCoordinates(latitude, longitude);
   };
 
   const handleGeoError = () => {
+    console.log('No Location');
     return;
   };
 
   const onBoundsChange = () => {
-    setState({ ...state, center: map.getCenter() });
-    console.log(state.center);
+    const [lat, lng] = instanceMap.getCenter();
+    setMapState({ ...mapState, center: [lat, lng] });
+    getAddressFromCoordinates(lat, lng);
+  };
+
+  const getAddressFromCoordinates = async (lat: number, lng: number) => {
+    const address = await reverseGeoCode(lat, lng);
+    if (address) {
+      setState({ ...state, address, searchingValue: address });
+    }
+  };
+
+  const getCoordinatesFromAddress = async (address: string) => {
+    const [lng, lat] = await geoCode(address);
+    if (lat && lng) {
+      setMapState({ ...mapState, center: [lat, lng]  })
+    }
+  };
+
+  const loadSuggest = ymaps => {
+    const suggestView = new ymaps.SuggestView('suggest');
+    suggestView.events.add('select', event => {
+      const item = event.get('item');
+      const { value } = item;
+      getCoordinatesFromAddress(value);
+    })
   };
 
   return (
@@ -44,17 +82,31 @@ const FindAddress: FunctionComponent<any> = (props) => {
         <YMaps
           query={{
             lang: 'en_US',
-            apikey: '963d0e32-6ea5-47a6-80f1-9ab4f6571ca3'
+            apikey: MAPS_APIKEY
           }}
         >
+          <MapSearchControl
+            id="suggest"
+            value={state.searchingValue}
+            onChange={event => setState({ ...state, searchingValue: event.target.value })}
+          />
           <div className={style.Pin}>📍</div>
+          <div className={style.Address}>{ state.address }</div>
           <Map
-            state={state}
-            instanceRef={map => setMap(map)}
+            state={mapState}
+            onLoad={ymaps => loadSuggest(ymaps)}
+            instanceRef={map => setInstanceMap(map)}
             onBoundsChange={onBoundsChange}
+            modules={['SuggestView', 'Event']}
             width={'100%'}
             height={'100%'}
-          />
+          >
+            <GeolocationControl
+              options={{
+                position: { bottom: 40, right: 15 }
+              }}
+            />
+          </Map>
         </YMaps>
       </div>
   )
