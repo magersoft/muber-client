@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import Helmet from 'react-helmet';
 import style from './AddPlace.module.scss';
@@ -34,7 +34,7 @@ interface IState {
   isFavorite: boolean;
 }
 
-const AddPlace: FunctionComponent<IProps> = ({ history }) => {
+const AddPlace: FunctionComponent<IProps> = ({ history, location }) => {
   const classes = useStyles();
   const [state, setState] = useState<IState>({
     name: '',
@@ -43,6 +43,19 @@ const AddPlace: FunctionComponent<IProps> = ({ history }) => {
     lng: 0,
     isFavorite: false
   });
+
+  useEffect(() => {
+    if (location.state) {
+      // @ts-ignore
+      const { address, lat, lng } = location.state;
+      setState({
+        ...state,
+        address,
+        lat,
+        lng
+      })
+    }
+  }, [location]);
 
   const [addPlace, { loading }] = useMutation(ADD_PLACE);
 

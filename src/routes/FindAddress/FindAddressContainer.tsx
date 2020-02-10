@@ -5,6 +5,10 @@ import style from './FindAddress.module.scss';
 import { MAPS_APIKEY } from '../../apiKeys';
 import { geoCode, reverseGeoCode } from '../../utils/geocoder';
 import MapSearchControl from '../../components/MapSearchControl';
+import Button from '../../components/Button';
+import { RouteComponentProps } from 'react-router-dom';
+
+interface IProps extends RouteComponentProps<any> {}
 
 interface IMaps {
   center: number[];
@@ -16,10 +20,10 @@ interface IState {
   searchingValue: string;
 }
 
-const FindAddress: FunctionComponent<any> = () => {
+const FindAddress: FunctionComponent<IProps> = (props) => {
   const [mapState, setMapState] = useState<IMaps>({
     center: [0, 0],
-    zoom: 14
+    zoom: 17
   });
   const [state, setState] = useState<IState>({
     address: '',
@@ -27,11 +31,13 @@ const FindAddress: FunctionComponent<any> = () => {
   });
   const [instanceMap, setInstanceMap] = useState<any>({});
 
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
   }, [navigator.geolocation]);
 
-  const handleGeoSuccess = (position: Position) => {
+  const handleGeoSuccess: PositionCallback = (position: Position) => {
+    console.log(position);
     const { coords: { latitude, longitude } } = position;
     setMapState({
       ...mapState,
@@ -40,9 +46,18 @@ const FindAddress: FunctionComponent<any> = () => {
     getAddressFromCoordinates(latitude, longitude);
   };
 
-  const handleGeoError = () => {
+  const handleGeoError: PositionErrorCallback = () => {
     console.log('No Location');
     return;
+  };
+
+  const loadMap = ymaps => {
+    const suggestView = new ymaps.SuggestView('suggest', { results: 3 });
+    suggestView.events.add('select', event => {
+      const item = event.get('item');
+      const { value } = item;
+      getCoordinatesFromAddress(value);
+    });
   };
 
   const onBoundsChange = () => {
@@ -65,13 +80,17 @@ const FindAddress: FunctionComponent<any> = () => {
     }
   };
 
-  const loadSuggest = ymaps => {
-    const suggestView = new ymaps.SuggestView('suggest');
-    suggestView.events.add('select', event => {
-      const item = event.get('item');
-      const { value } = item;
-      getCoordinatesFromAddress(value);
-    })
+  const pickThisPlace = () => {
+    const { address } = state;
+    const [lat, lng] = mapState.center;
+    const { history } = props;
+    history.push({
+      pathname: '/add-place',
+      state: {
+        address,
+        lat, lng
+      }
+    });
   };
 
   return (
@@ -92,9 +111,10 @@ const FindAddress: FunctionComponent<any> = () => {
           />
           <div className={style.Pin}>📍</div>
           <div className={style.Address}>{ state.address }</div>
+          <Button label="Pick this Place" className={style.Button} onClick={pickThisPlace} />
           <Map
             state={mapState}
-            onLoad={ymaps => loadSuggest(ymaps)}
+            onLoad={ymaps => loadMap(ymaps)}
             instanceRef={map => setInstanceMap(map)}
             onBoundsChange={onBoundsChange}
             modules={['SuggestView', 'Event']}
@@ -103,7 +123,7 @@ const FindAddress: FunctionComponent<any> = () => {
           >
             <GeolocationControl
               options={{
-                position: { bottom: 40, right: 15 }
+                position: { bottom: 150, right: 15 }
               }}
             />
           </Map>

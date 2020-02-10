@@ -18,7 +18,7 @@ Learning and practice on really project
 - [x] Edit Account
 - [x] Settings
 - [x] Add Place
-- [ ] Find Address
+- [x] Find Address
 - [ ] Challenge: Ride History
     
 ### Awesome

@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import style from './Menu.module.scss';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';

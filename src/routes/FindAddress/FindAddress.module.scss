@@ -4,6 +4,17 @@
   left: 0;
   height: 100%;
   width: 100%;
+
+  .Button {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    z-index: 10;
+    height: auto;
+    width: 80%;
+  }
 }
 
 .Pin {
