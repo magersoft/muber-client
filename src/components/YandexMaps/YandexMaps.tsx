@@ -6,6 +6,11 @@ import { MAPS_APIKEY } from '../../apiKeys';
 import style from './YandexMap.module.scss';
 import Button from '../Button';
 import { toast } from 'react-toastify';
+import { Backdrop, CircularProgress, Drawer, InputAdornment, TextField } from '@material-ui/core';
+import { WhereToVote, WhereToVoteOutlined } from '@material-ui/icons';
+
+// Price for one km in ruble
+const PRICE_FOR_ONE_KM = 12;
 
 interface IProps {
   isPickPlaceMap?: boolean;
@@ -24,6 +29,10 @@ interface IState {
   geolocation: number[];
   toGeolocation: number[];
   isUserPickAddress: boolean;
+  drawer: boolean,
+  distance?: number;
+  duration?: number;
+  price?: number;
 }
 
 const YandexMaps: FunctionComponent<IProps> = (
@@ -39,7 +48,11 @@ const YandexMaps: FunctionComponent<IProps> = (
     searchingValue: '',
     geolocation: [0, 0],
     toGeolocation: [0, 0],
-    isUserPickAddress: false
+    isUserPickAddress: false,
+    drawer: false,
+    distance: void 0,
+    duration: void 0,
+    price: void 0
   });
   const [ymapsObj, setYmaps] = useState<any>({});
   const [map, setMap] = useState<any>({});
@@ -93,7 +106,7 @@ const YandexMaps: FunctionComponent<IProps> = (
         center: [lat, lng],
         geolocation: [lat, lng],
         address,
-        searchingValue: address
+        searchingValue: isPickPlaceMap ? address : ''
       })
     }
   };
@@ -199,15 +212,46 @@ const YandexMaps: FunctionComponent<IProps> = (
         map.geoObjects.remove(route);
       }
       ymapsObj.route([geolocation, toGeolocation], {
-        mapStateAutoApply: true,
-        multiRoute: true
+        mapStateAutoApply: true
       }).then(route => {
         setRoute(route);
+        route.getPaths()
+          .options.set({
+          // В балуне выводим только информацию о времени движения с учетом пробок.
+          balloonContentLayout: ymapsObj.templateLayoutFactory
+            .createClass('Стоимость поездки'),
+          // Можно выставить настройки графики маршруту.
+          strokeColor: '000',
+          opacity: 0.5
+        });
         map.geoObjects.add(route);
+        const distance = route.getLength();
+        const duration = route.getTime();
+
+        setState({
+          ...state,
+          duration,
+          distance,
+          price: setPrice(distance),
+          drawer: true
+        });
+      }).catch(e => {
+        console.error(e);
       });
     }
 
     pickButton.onClick(event, payload);
+  };
+
+  const setPrice = (distance: number): number => {
+    return Math.round((distance / 1000) * PRICE_FOR_ONE_KM);
+  };
+
+  const onRequestRide = event => {
+    const { address, toAddress, geolocation, toGeolocation, duration, distance, price } = state;
+    console.log(address, geolocation);
+    console.log(toAddress, toGeolocation);
+    console.log(duration, distance, price);
   };
 
   return (
@@ -243,7 +287,7 @@ const YandexMaps: FunctionComponent<IProps> = (
           onLoad={ymaps => loadMap(ymaps)}
           instanceRef={map => setMap(map)}
           onBoundsChange={onBoundsChange}
-          modules={['SuggestView', 'route']}
+          modules={['SuggestView', 'route', 'templateLayoutFactory']}
           width={'100%'}
           height={'100%'}
         >
@@ -266,13 +310,49 @@ const YandexMaps: FunctionComponent<IProps> = (
               }
             </React.Fragment>
           }
-          <GeolocationControl
-            options={{
-              position: { bottom: 150, right: 15 }
-            }}
-          />
+          <Drawer anchor="bottom" open={state.drawer} onClose={() => setState({ ...state, drawer: false })}>
+            <div className={style.AboutRoute}>
+              <TextField
+                label="From Place"
+                value={state.address}
+                fullWidth
+                disabled
+                InputProps={{
+                  startAdornment:
+                    <InputAdornment position="start">
+                      <WhereToVoteOutlined />
+                    </InputAdornment>
+                }}
+              />
+              <TextField
+                label="To Place"
+                value={state.toAddress}
+                fullWidth
+                disabled
+                InputProps={{
+                  startAdornment:
+                    <InputAdornment position="start">
+                      <WhereToVote />
+                    </InputAdornment>
+                }}
+              />
+              {
+                (state.distance && state.duration && state.price) &&
+                <div className={style.RoutePrice}>
+                  <div>Distance: <span>{ Math.round(state.distance / 1000) } km</span></div>
+                  <div>Duration: <span>{ Math.floor(state.duration / 60) } min</span></div>
+                  <hr/>
+                  <div className={style.Price}>{ state.price } ₽</div>
+                </div>
+              }
+              <Button label="Request a ride" onClick={onRequestRide} />
+            </div>
+          </Drawer>
         </Map>
       </YMaps>
+      <Backdrop className={style.Backdrop} open={mapLoading} timeout={0}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   )
 };
