@@ -21,7 +21,7 @@ const HomeContainer: FunctionComponent<IProps> = () => {
     setMenuOpen(!isMenuOpen);
   };
 
-  const onPickAddress = (_, payload) => {
+  const handleLocation = (_, payload) => {
     console.log(payload);
   };
 
@@ -47,10 +47,8 @@ const HomeContainer: FunctionComponent<IProps> = () => {
             <MenuIcon />
           </IconButton>
           <YandexMaps
-            pickButton={{
-              label: 'Pick Address',
-              onClick: (event, payload) => onPickAddress(event, payload)
-            }}
+            pickButton={{ label: 'Pick Address' }}
+            onReportLocation={(event, payload) => handleLocation(event, payload)}
           />
         </Sidebar>
       }

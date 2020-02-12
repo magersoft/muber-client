@@ -1,13 +1,15 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import { geoCode, reverseGeoCode } from '../../utils/geocoder';
 import MapSearchControl from '../MapSearchControl';
-import { GeolocationControl, Map, Placemark, YMaps } from 'react-yandex-maps';
+import { Map, Placemark, YMaps } from 'react-yandex-maps';
 import { MAPS_APIKEY } from '../../apiKeys';
 import style from './YandexMap.module.scss';
 import Button from '../Button';
 import { toast } from 'react-toastify';
 import { Backdrop, CircularProgress, Drawer, InputAdornment, TextField } from '@material-ui/core';
 import { WhereToVote, WhereToVoteOutlined } from '@material-ui/icons';
+import { useMutation } from '@apollo/react-hooks';
+import { REPORT_LOCATION } from '../../routes/Home/Home.query';
 
 // Price for one km in ruble
 const PRICE_FOR_ONE_KM = 12;
@@ -16,8 +18,9 @@ interface IProps {
   isPickPlaceMap?: boolean;
   pickButton: {
     label: string;
-    onClick: any;
-  }
+    onClick?: any;
+  },
+  onReportLocation?: any;
 }
 
 interface IState {
@@ -38,7 +41,8 @@ interface IState {
 const YandexMaps: FunctionComponent<IProps> = (
   {
     isPickPlaceMap = false,
-    pickButton
+    pickButton,
+    onReportLocation
   }) => {
   const [state, setState] = useState<IState>({
     center: [0, 0],
@@ -58,6 +62,8 @@ const YandexMaps: FunctionComponent<IProps> = (
   const [map, setMap] = useState<any>({});
   const [route, setRoute] = useState<any>(null);
   const [mapLoading, setLoading] = useState<boolean>(true);
+
+  const [reportLocation] = useMutation(REPORT_LOCATION);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
@@ -91,6 +97,18 @@ const YandexMaps: FunctionComponent<IProps> = (
       center: [latitude, longitude],
       geolocation: [latitude, longitude]
     });
+    reportLocation({
+      variables: {
+        lat: latitude,
+        lng: longitude
+      },
+      update: (_, result: any) => {
+        const { data: { ReportMovement } } = result;
+        if (!ReportMovement.ok) {
+          toast.error(ReportMovement.error)
+        }
+      }
+    })
   };
 
   const handleGeoWatchError: PositionErrorCallback = (): void => {
@@ -240,7 +258,9 @@ const YandexMaps: FunctionComponent<IProps> = (
       });
     }
 
-    pickButton.onClick(event, payload);
+    if (pickButton.onClick) {
+      pickButton.onClick(event, payload);
+    }
   };
 
   const setPrice = (distance: number): number => {
@@ -249,9 +269,18 @@ const YandexMaps: FunctionComponent<IProps> = (
 
   const onRequestRide = event => {
     const { address, toAddress, geolocation, toGeolocation, duration, distance, price } = state;
-    console.log(address, geolocation);
-    console.log(toAddress, toGeolocation);
-    console.log(duration, distance, price);
+
+    if (onReportLocation) {
+      onReportLocation(event, {
+        address,
+        toAddress,
+        geolocation,
+        toGeolocation,
+        duration,
+        distance,
+        price
+      });
+    }
   };
 
   return (

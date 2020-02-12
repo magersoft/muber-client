@@ -93,7 +93,7 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
         profilePhoto,
         password: password || null
       },
-      update: (cache, result: any) => {
+      update: (_, result: any) => {
         const data: updateProfile = result.data;
         const { UpdateMyProfile } = data;
         if (UpdateMyProfile.ok) {
