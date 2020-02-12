@@ -21,6 +21,10 @@ const HomeContainer: FunctionComponent<IProps> = () => {
     setMenuOpen(!isMenuOpen);
   };
 
+  const onPickAddress = (_, payload) => {
+    console.log(payload);
+  };
+
   return (
     <div className={style.Home}>
       <Helmet>
@@ -35,7 +39,7 @@ const HomeContainer: FunctionComponent<IProps> = () => {
             sidebar: {
               backgroundColor: 'white',
               width: '80%',
-              zIndex: '10'
+              zIndex: '20'
             }
           }}
         >
@@ -45,7 +49,7 @@ const HomeContainer: FunctionComponent<IProps> = () => {
           <YandexMaps
             pickButton={{
               label: 'Pick Address',
-              onClick: null
+              onClick: (event, payload) => onPickAddress(event, payload)
             }}
           />
         </Sidebar>
