@@ -7,15 +7,17 @@ import Sidebar from 'react-sidebar';
 import Menu from '../../components/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import YandexMaps from '../../components/YandexMaps';
-import { IconButton } from '@material-ui/core';
+import { Backdrop, CircularProgress, IconButton } from '@material-ui/core';
 import style from './Home.module.scss';
+import { GET_NEARBY_DRIVERS } from './Home.query';
 
 interface IProps extends RouteComponentProps<any> {}
 
 const HomeContainer: FunctionComponent<IProps> = () => {
   const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
 
-  const { loading, data } = useQuery(USER_PROFILE);
+  const { loading: loadingUser, data: userData } = useQuery(USER_PROFILE);
+  const { loading: loadingDrivers, data: driversData } = useQuery(GET_NEARBY_DRIVERS);
 
   const toggleMenu = (): void => {
     setMenuOpen(!isMenuOpen);
@@ -30,9 +32,9 @@ const HomeContainer: FunctionComponent<IProps> = () => {
       <Helmet>
         <title>Home | Muber</title>
       </Helmet>
-      { !loading && data.GetMyProfile.user &&
+      { !loadingUser && userData.GetMyProfile.user &&
         <Sidebar
-          sidebar={<Menu user={data.GetMyProfile.user} />}
+          sidebar={<Menu user={userData.GetMyProfile.user} />}
           open={isMenuOpen}
           onSetOpen={toggleMenu}
           styles={{
@@ -46,12 +48,19 @@ const HomeContainer: FunctionComponent<IProps> = () => {
           <IconButton onClick={toggleMenu} className={style.MenuIcon}>
             <MenuIcon />
           </IconButton>
-          <YandexMaps
-            pickButton={{ label: 'Pick Address' }}
-            onReportLocation={(event, payload) => handleLocation(event, payload)}
-          />
+          { !loadingDrivers && driversData.GetNearbyDrivers.drivers &&
+            <YandexMaps
+              user={userData.GetMyProfile.user}
+              drivers={driversData.GetNearbyDrivers.drivers}
+              pickButton={{ label: 'Pick Address' }}
+              requestRide={(event, payload) => handleLocation(event, payload)}
+            />
+          }
         </Sidebar>
       }
+      <Backdrop className={style.Backdrop} open={loadingUser || loadingDrivers} timeout={0}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   )
 };

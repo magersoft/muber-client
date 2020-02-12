@@ -53,6 +53,7 @@ export interface editPlace {
 }
 
 export interface editPlaceVariables {
+  placeId: number;
   name?: string | null;
   isFavorite?: boolean | null;
 }
@@ -108,6 +109,54 @@ export interface updateProfileVariables {
   password?: string | null;
   profilePhoto?: string | null;
   age?: number | null;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: reportMovement
+// ====================================================
+
+export interface reportMovement_ReportMovement {
+  __typename: "ReportMovementResponse";
+  ok: boolean;
+  error: string | null;
+}
+
+export interface reportMovement {
+  ReportMovement: reportMovement_ReportMovement;
+}
+
+export interface reportMovementVariables {
+  lat: number;
+  lng: number;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: getNearbyDrivers
+// ====================================================
+
+export interface getNearbyDrivers_GetNearbyDrivers_drivers {
+  __typename: "User";
+  id: number;
+  lastLat: number | null;
+  lastLng: number | null;
+}
+
+export interface getNearbyDrivers_GetNearbyDrivers {
+  __typename: "GetNearbyDriversResponse";
+  ok: boolean;
+  drivers: (getNearbyDrivers_GetNearbyDrivers_drivers | null)[] | null;
+}
+
+export interface getNearbyDrivers {
+  GetNearbyDrivers: getNearbyDrivers_GetNearbyDrivers;
 }
 
 /* tslint:disable */

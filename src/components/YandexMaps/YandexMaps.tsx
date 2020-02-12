@@ -14,13 +14,23 @@ import { REPORT_LOCATION } from '../../routes/Home/Home.query';
 // Price for one km in ruble
 const PRICE_FOR_ONE_KM = 12;
 
+interface IDriver {
+  id: number;
+  lastLat: number;
+  lastLng: number;
+}
+
 interface IProps {
+  user?: {
+    isDriving: boolean;
+  };
+  drivers?: IDriver[];
   isPickPlaceMap?: boolean;
   pickButton: {
     label: string;
     onClick?: any;
   },
-  onReportLocation?: any;
+  requestRide?: any;
 }
 
 interface IState {
@@ -40,9 +50,11 @@ interface IState {
 
 const YandexMaps: FunctionComponent<IProps> = (
   {
+    user,
+    drivers,
     isPickPlaceMap = false,
     pickButton,
-    onReportLocation
+    requestRide
   }) => {
   const [state, setState] = useState<IState>({
     center: [0, 0],
@@ -67,6 +79,7 @@ const YandexMaps: FunctionComponent<IProps> = (
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
+    console.log(drivers);
 
     if (!isPickPlaceMap) {
       const watchOptions: PositionOptions = {
@@ -78,7 +91,7 @@ const YandexMaps: FunctionComponent<IProps> = (
         navigator.geolocation.clearWatch(watch);
       }
     }
-  }, []);
+  }, [drivers]);
 
   const handleGeoSuccess: PositionCallback = (position: Position): void => {
     const { coords: { latitude, longitude } } = position;
@@ -86,7 +99,7 @@ const YandexMaps: FunctionComponent<IProps> = (
   };
 
   const handleGeoError: PositionErrorCallback = (): void => {
-    console.log('No Location!');
+    console.warn('No Location!');
     return;
   };
 
@@ -112,7 +125,7 @@ const YandexMaps: FunctionComponent<IProps> = (
   };
 
   const handleGeoWatchError: PositionErrorCallback = (): void => {
-    console.log('Error watching you!');
+    console.warn('Error watching you!');
     return;
   };
 
@@ -143,7 +156,9 @@ const YandexMaps: FunctionComponent<IProps> = (
 
   const loadMap = ymaps => {
     setYmaps(ymaps);
-    suggestView(ymaps);
+    if (user && !user.isDriving) {
+      suggestView(ymaps);
+    }
     createRoute(ymaps);
     ymaps.ready(() => {
       setLoading(false);
@@ -270,8 +285,8 @@ const YandexMaps: FunctionComponent<IProps> = (
   const onRequestRide = event => {
     const { address, toAddress, geolocation, toGeolocation, duration, distance, price } = state;
 
-    if (onReportLocation) {
-      onReportLocation(event, {
+    if (requestRide) {
+      requestRide(event, {
         address,
         toAddress,
         geolocation,
@@ -291,23 +306,27 @@ const YandexMaps: FunctionComponent<IProps> = (
           apikey: MAPS_APIKEY
         }}
       >
-        <MapSearchControl
-          id="suggest"
-          value={state.searchingValue}
-          onChange={event => setState({ ...state, searchingValue: event.target.value })}
-        />
+        { user && !user.isDriving &&
+          <React.Fragment>
+            <MapSearchControl
+              id="suggest"
+              value={state.searchingValue}
+              onChange={event => setState({ ...state, searchingValue: event.target.value })}
+            />
+            <Button
+              label={pickButton.label}
+              className={style.Button}
+              onClick={handlePickButton}
+              disabled={mapLoading || !state.isUserPickAddress}
+            />
+          </React.Fragment>
+        }
         { isPickPlaceMap &&
           <React.Fragment>
             <div className={style.Pin}>📍</div>
             <div className={style.Address}>{ state.address }</div>
           </React.Fragment>
         }
-        <Button
-          label={pickButton.label}
-          className={style.Button}
-          onClick={handlePickButton}
-          disabled={mapLoading || !state.isUserPickAddress}
-        />
         <Map
           state={{
             center: state.center,
@@ -337,6 +356,12 @@ const YandexMaps: FunctionComponent<IProps> = (
                   }}
                 />
               }
+              { drivers && drivers.map(driver => (
+                <Placemark
+                  key={driver.id}
+                  geometry={[driver.lastLat, driver.lastLng]}
+                />
+              )) }
             </React.Fragment>
           }
           <Drawer anchor="bottom" open={state.drawer} onClose={() => setState({ ...state, drawer: false })}>
