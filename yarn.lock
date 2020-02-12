@@ -1570,6 +1570,11 @@
     "@types/react-dom" "*"
     "@types/testing-library__dom" "*"
 
+"@types/yandex-maps@^2.1.9":
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/@types/yandex-maps/-/yandex-maps-2.1.9.tgz#fdbc4cfda4dd83ea521af8a2d7b4ec97b9375061"
+  integrity sha512-pUiEkvOOqHyZ8253qk4mGHfmJa44IL1y2PhKVZNfyKVUtD9tI3SQRgnwIXDad3XKwe8aznG8y0Jfa4tcGYuKZg==
+
 "@types/yargs-parser@*":
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-15.0.0.tgz#cb3f9f741869e20cce330ffbeb9271590483882d"

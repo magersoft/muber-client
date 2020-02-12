@@ -1,4 +1,4 @@
-# (M)Uber clone on TypeScript, NodeJS, GraphQL (Client)
+# (M)Uber clone on React.js, Apollo, TypeScript (Client)
 
 Learning and practice on really project
 
