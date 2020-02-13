@@ -15,3 +15,8 @@ a {
 button {
   outline: none;
 }
+
+//[class*="ymaps-2"][class*="-ground-pane"] {
+//  -webkit-filter: grayscale(100%) url(/path-to-svg/yellowfilter.svg#yellowfilter);
+//  filter: grayscale(100%) url(/path-to-svg/yellowfilter.svg#yellowfilter);
+//}

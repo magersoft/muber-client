@@ -20,6 +20,9 @@ const FindAddress: FunctionComponent<IProps> = ({ history }) => {
         <title>Find Address | Muber</title>
       </Helmet>
         <YandexMaps
+          user={{
+            isDriving: false
+          }}
           isPickPlaceMap
           pickButton={{
             label: 'Pick this place',

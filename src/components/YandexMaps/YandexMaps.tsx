@@ -10,6 +10,7 @@ import { Backdrop, CircularProgress, Drawer, InputAdornment, TextField } from '@
 import { WhereToVote, WhereToVoteOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
 import { REPORT_LOCATION } from '../../routes/Home/Home.query';
+import CarImage from '../../images/carBlack.svg';
 
 // Price for one km in ruble
 const PRICE_FOR_ONE_KM = 12;
@@ -79,7 +80,6 @@ const YandexMaps: FunctionComponent<IProps> = (
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
-    console.log(drivers);
 
     if (!isPickPlaceMap) {
       const watchOptions: PositionOptions = {
@@ -250,12 +250,8 @@ const YandexMaps: FunctionComponent<IProps> = (
         setRoute(route);
         route.getPaths()
           .options.set({
-          // В балуне выводим только информацию о времени движения с учетом пробок.
-          balloonContentLayout: ymapsObj.templateLayoutFactory
-            .createClass('Стоимость поездки'),
-          // Можно выставить настройки графики маршруту.
-          strokeColor: '000',
-          opacity: 0.5
+            strokeColor: '000',
+            opacity: 0.5
         });
         map.geoObjects.add(route);
         const distance = route.getLength();
@@ -356,10 +352,16 @@ const YandexMaps: FunctionComponent<IProps> = (
                   }}
                 />
               }
-              { drivers && drivers.map(driver => (
+              { user && !user.isDriving && drivers && drivers.map(driver => (
                 <Placemark
                   key={driver.id}
                   geometry={[driver.lastLat, driver.lastLng]}
+                  options={{
+                    iconLayout: 'default#image',
+                    iconImageHref: CarImage,
+                    iconImageSize: [60, 33],
+                    iconImageOffset: [-30, -17]
+                  }}
                 />
               )) }
             </React.Fragment>

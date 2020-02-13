@@ -17,7 +17,9 @@ const HomeContainer: FunctionComponent<IProps> = () => {
   const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
 
   const { loading: loadingUser, data: userData } = useQuery(USER_PROFILE);
-  const { loading: loadingDrivers, data: driversData } = useQuery(GET_NEARBY_DRIVERS);
+  const { loading: loadingDrivers, data: driversData } = useQuery(GET_NEARBY_DRIVERS, {
+    pollInterval: 1000
+  });
 
   const toggleMenu = (): void => {
     setMenuOpen(!isMenuOpen);
