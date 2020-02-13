@@ -1081,7 +1081,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Float",
                 "ofType": null
               }
             },
@@ -1097,7 +1097,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Float",
                 "ofType": null
               }
             },
@@ -1946,7 +1946,7 @@
                 "defaultValue": null
               },
               {
-                "name": "dropOfLng",
+                "name": "dropOffLng",
                 "description": "",
                 "type": {
                   "kind": "NON_NULL",
@@ -1981,7 +1981,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "Float",
                     "ofType": null
                   }
                 },
@@ -1995,7 +1995,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "String",
+                    "name": "Float",
                     "ofType": null
                   }
                 },

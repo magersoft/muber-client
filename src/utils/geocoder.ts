@@ -2,7 +2,7 @@ import axios from 'axios';
 import { MAPS_APIKEY } from '../apiKeys';
 import { toast } from 'react-toastify';
 
-export const geoCode = async (address: string) => {
+export const geoCode = async (address: string): Promise<number[] | undefined> => {
   const url = `https://geocode-maps.yandex.ru/1.x/?apikey=${MAPS_APIKEY}&format=json&geocode=${address}`;
   const { status, data } = await axios(url);
   if (status === 200) {
@@ -14,9 +14,10 @@ export const geoCode = async (address: string) => {
      }
    } = data;
    const place = featureMember[0].GeoObject;
-   return place.Point.pos.split(' ');
+   const [lng, lat] = place.Point.pos.split(' ');
+   return [+lng, +lat];
   } else {
-    toast.error(data.error_message)
+    toast.error(data.error_message);
   }
 };
 

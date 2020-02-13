@@ -69,3 +69,21 @@
     font-weight: bold;
   }
 }
+
+.FindingDriver {
+  position: absolute;
+  height: 45px;
+  font-size: 30px;
+  text-align: center;
+  z-index: 101;
+  top: 300px;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  color: white
+}
+
+.Avatar {
+  width: 60px!important;
+  height: 60px!important;
+}

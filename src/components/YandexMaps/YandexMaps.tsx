@@ -6,7 +6,17 @@ import { MAPS_APIKEY } from '../../apiKeys';
 import style from './YandexMap.module.scss';
 import Button from '../Button';
 import { toast } from 'react-toastify';
-import { Backdrop, CircularProgress, Drawer, InputAdornment, TextField } from '@material-ui/core';
+import {
+  Avatar,
+  Backdrop,
+  CircularProgress,
+  Dialog, DialogActions,
+  DialogContent,
+  DialogTitle,
+  Drawer,
+  InputAdornment,
+  TextField
+} from '@material-ui/core';
 import { WhereToVote, WhereToVoteOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
 import { REPORT_LOCATION } from '../../routes/Home/Home.query';
@@ -21,17 +31,34 @@ interface IDriver {
   lastLng: number;
 }
 
+interface IRide {
+  id: number;
+  pickUpAddress: string;
+  dropOffAddress: string;
+  price: number;
+  distance: number;
+  duration: number;
+  passenger: {
+    fullName: string;
+    profilePhoto: string;
+  }
+}
+
 interface IProps {
   user?: {
     isDriving: boolean;
   };
   drivers?: IDriver[];
+  isDriving?: boolean;
   isPickPlaceMap?: boolean;
   pickButton: {
     label: string;
     onClick?: any;
   },
   requestRide?: any;
+  acceptRide?: any;
+  findingDrivers?: boolean;
+  nearbyRide?: IRide;
 }
 
 interface IState {
@@ -53,9 +80,13 @@ const YandexMaps: FunctionComponent<IProps> = (
   {
     user,
     drivers,
+    isDriving = false,
     isPickPlaceMap = false,
     pickButton,
-    requestRide
+    requestRide,
+    acceptRide,
+    findingDrivers= false,
+    nearbyRide
   }) => {
   const [state, setState] = useState<IState>({
     center: [0, 0],
@@ -77,6 +108,12 @@ const YandexMaps: FunctionComponent<IProps> = (
   const [mapLoading, setLoading] = useState<boolean>(true);
 
   const [reportLocation] = useMutation(REPORT_LOCATION);
+
+  useEffect(() => {
+    if (findingDrivers) {
+      setState({ ...state, drawer: false });
+    }
+  }, [findingDrivers]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(handleGeoSuccess, handleGeoError);
@@ -143,7 +180,7 @@ const YandexMaps: FunctionComponent<IProps> = (
   };
 
   const getCoordinatesFromAddress = async (address: string): Promise<any> => {
-    const [lng, lat] = await geoCode(address);
+    const [lng, lat]: any = await geoCode(address);
     if (lat && lng) {
       setState({
         ...state,
@@ -294,6 +331,12 @@ const YandexMaps: FunctionComponent<IProps> = (
     }
   };
 
+  const onAcceptRide = (event, rideId: number) => {
+    if (acceptRide) {
+      acceptRide(event, rideId);
+    }
+  };
+
   return (
     <div className={style.Map}>
       <YMaps
@@ -302,7 +345,7 @@ const YandexMaps: FunctionComponent<IProps> = (
           apikey: MAPS_APIKEY
         }}
       >
-        { user && !user.isDriving &&
+        { !isDriving &&
           <React.Fragment>
             <MapSearchControl
               id="suggest"
@@ -313,7 +356,7 @@ const YandexMaps: FunctionComponent<IProps> = (
               label={pickButton.label}
               className={style.Button}
               onClick={handlePickButton}
-              disabled={mapLoading || !state.isUserPickAddress}
+              disabled={mapLoading || !state.isUserPickAddress || findingDrivers}
             />
           </React.Fragment>
         }
@@ -322,6 +365,46 @@ const YandexMaps: FunctionComponent<IProps> = (
             <div className={style.Pin}>📍</div>
             <div className={style.Address}>{ state.address }</div>
           </React.Fragment>
+        }
+        { findingDrivers &&
+          <div className={style.FindingDriver}>Finding a driver ...</div>
+        }
+        { isDriving && nearbyRide &&
+          <Dialog aria-labelledby="customized-dialog-title" fullWidth open={isDriving}>
+            <DialogTitle id="customized-dialog-title">
+              New request a Ride
+            </DialogTitle>
+            <DialogContent dividers>
+              <div>
+                <h4>Pick Up Address</h4>
+                <span>{ nearbyRide.pickUpAddress }</span>
+              </div>
+              <div>
+                <h4>Drop Off Address</h4>
+                <span>{ nearbyRide.dropOffAddress }</span>
+              </div>
+              <div>
+                <h4>Price</h4>
+                <span>{ nearbyRide.price }</span>
+              </div>
+              <div>
+                <h4>Distance</h4>
+                <span>{ nearbyRide.distance }</span>
+              </div>
+              <div>
+                <h4>Duration</h4>
+                <span>{ nearbyRide.duration }</span>
+              </div>
+              <div>
+                <h4>Passenger</h4>
+                <Avatar alt="Remy Sharp" src={nearbyRide.passenger.profilePhoto} className={style.Avatar} />
+                <span>{ nearbyRide.passenger.fullName }</span>
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button label="Accept Ride" onClick={(event) => onAcceptRide(event, nearbyRide.id)} />
+            </DialogActions>
+          </Dialog>
         }
         <Map
           state={{
@@ -352,7 +435,7 @@ const YandexMaps: FunctionComponent<IProps> = (
                   }}
                 />
               }
-              { user && !user.isDriving && drivers && drivers.map(driver => (
+              { !isDriving && drivers && drivers.map(driver => (
                 <Placemark
                   key={driver.id}
                   geometry={[driver.lastLat, driver.lastLng]}
@@ -406,7 +489,7 @@ const YandexMaps: FunctionComponent<IProps> = (
           </Drawer>
         </Map>
       </YMaps>
-      <Backdrop className={style.Backdrop} open={mapLoading} timeout={0}>
+      <Backdrop className={style.Backdrop} open={mapLoading || findingDrivers} timeout={0}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>
