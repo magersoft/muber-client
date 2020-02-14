@@ -7,12 +7,8 @@ import style from './YandexMap.module.scss';
 import Button from '../Button';
 import { toast } from 'react-toastify';
 import {
-  Avatar,
   Backdrop,
   CircularProgress,
-  Dialog, DialogActions,
-  DialogContent,
-  DialogTitle,
   Drawer,
   InputAdornment,
   TextField
@@ -23,21 +19,15 @@ import { REPORT_LOCATION } from '../../routes/Home/Home.query';
 import CarImage from '../../images/carBlack.svg';
 import Popup from '../Popup';
 import { distancePipe, durationPipe } from '../../utils/pipes';
+import { getNearbyDrivers_GetNearbyDrivers_drivers, reportMovement } from '../../types/api';
+import { IUser } from '../../types/local';
 
 // Price for one km in ruble
 const PRICE_FOR_ONE_KM = 12;
 
-interface IDriver {
-  id: number;
-  lastLat: number;
-  lastLng: number;
-}
-
 interface IProps {
-  user?: {
-    isDriving: boolean;
-  };
-  drivers?: IDriver[];
+  user?: IUser | any;
+  drivers?: (getNearbyDrivers_GetNearbyDrivers_drivers | null)[] | any;
   isDriving?: boolean;
   isPickPlaceMap?: boolean;
   pickButton: {
@@ -96,7 +86,7 @@ const YandexMaps: FunctionComponent<IProps> = (
   const [route, setRoute] = useState<any>(null);
   const [mapLoading, setLoading] = useState<boolean>(true);
 
-  const [reportLocation] = useMutation(REPORT_LOCATION);
+  const [reportLocation] = useMutation<reportMovement>(REPORT_LOCATION);
 
   useEffect(() => {
     if (findingDrivers) {

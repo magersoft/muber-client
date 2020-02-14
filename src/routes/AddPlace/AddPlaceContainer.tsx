@@ -6,7 +6,7 @@ import Header from '../../components/Header';
 import { Button, CircularProgress, createStyles, makeStyles, TextField, Theme } from '@material-ui/core';
 import { useMutation } from '@apollo/react-hooks';
 import { ADD_PLACE } from './AddPlace.query';
-import { addPlace } from '../../types/api';
+import { addPlace, addPlaceVariables } from '../../types/api';
 import { toast } from 'react-toastify';
 import { green } from '@material-ui/core/colors';
 import { GET_PLACES } from '../../shared.queries';
@@ -57,7 +57,7 @@ const AddPlace: FunctionComponent<IProps> = ({ history, location }) => {
     }
   }, [location]);
 
-  const [addPlace, { loading }] = useMutation(ADD_PLACE);
+  const [addPlace, { loading }] = useMutation<addPlace, addPlaceVariables>(ADD_PLACE);
 
   const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>): void => {
     setState({ ...state, [prop]: event.target.value });

@@ -1,0 +1,32 @@
+.Ride {
+  padding: 2rem;
+
+  h4 {
+    margin-bottom: 0;
+  }
+
+  button {
+    margin-top: 2rem;
+  }
+}
+
+.Passenger {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+
+  .Avatar {
+    width: 60px;
+    height: 60px;
+  }
+
+  span {
+    margin-left: 1rem;
+    font-size: 18px;
+  }
+}
+
+.Backdrop {
+  z-index: 100;
+  color: white;
+}

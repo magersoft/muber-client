@@ -7,7 +7,7 @@ import Input from '../../components/Input';
 import Header from '../../components/Header';
 import Button from '../../components/Button';
 import style from './VerifyPhone.module.scss';
-import { completePhoneVerification } from '../../types/api';
+import { completePhoneVerification, completePhoneVerificationVariables } from '../../types/api';
 import { toast } from 'react-toastify';
 import { LOG_USER_IN } from '../../shared.queries';
 
@@ -15,9 +15,9 @@ interface IProps extends RouteComponentProps<any> {}
 
 const VerifyPhoneContainer: FunctionComponent<IProps> = props => {
   const [key, setKey] = useState<string>('');
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
 
-  const [completePhoneVerification, { loading }] = useMutation<completePhoneVerification>(VERIFY_PHONE);
+  const [completePhoneVerification, { loading }] = useMutation<completePhoneVerification, completePhoneVerificationVariables>(VERIFY_PHONE);
   const [logUserIn] = useMutation(LOG_USER_IN);
 
   useEffect(() => {
@@ -32,11 +32,11 @@ const VerifyPhoneContainer: FunctionComponent<IProps> = props => {
   const onSubmit: React.FormEventHandler<HTMLFormElement> = (event): void => {
     event.preventDefault();
     completePhoneVerification({
-      update: completed,
       variables: {
         phoneNumber,
         key
-      }
+      },
+      update: completed
     })
   };
 

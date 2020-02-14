@@ -36,7 +36,7 @@ const LoggedOutRoutes: FunctionComponent = () => (
 const LoggedInRoutes: FunctionComponent = () => (
   <Switch>
     <Route path={'/'} exact={true} component={Home} />
-    <Route path={'/ride'} component={Ride} />
+    <Route path={'/ride/:rideId'} component={Ride} />
     <Route path={'/edit-account'} component={EditAccount} />
     <Route path={'/settings'} component={Settings} />
     <Route path={'/places'} component={Places} />

@@ -8,7 +8,7 @@ import BackArrow from '../../components/BlackArrow';
 import Input from '../../components/Input/Input';
 import countries from '../../countries';
 import style from './PhoneLogin.module.scss';
-import { startPhoneVerification } from '../../types/api';
+import { startPhoneVerification, startPhoneVerificationVariables } from '../../types/api';
 import { Select } from '@material-ui/core';
 
 interface IProps extends RouteComponentProps<any> {}
@@ -25,7 +25,7 @@ const PhoneLoginContainer: FunctionComponent<IProps> = ({ history }) => {
   });
   const phone = `${state.countryCode}${state.phoneNumber}`;
 
-  const [startPhoneVerification, { loading }] = useMutation<startPhoneVerification>(PHONE_SIGN_IN);
+  const [startPhoneVerification, { loading }] = useMutation<startPhoneVerification, startPhoneVerificationVariables>(PHONE_SIGN_IN);
 
   const handleChange = (prop: keyof IState) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | { value: unknown }>) => {

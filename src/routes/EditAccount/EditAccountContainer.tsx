@@ -11,7 +11,7 @@ import { USER_PROFILE } from '../../shared.queries';
 import { UPDATE_PROFILE } from './EditAccount.query';
 import { toast } from 'react-toastify';
 import { green } from '@material-ui/core/colors';
-import { updateProfile } from '../../types/api';
+import { updateProfile, updateProfileVariables } from '../../types/api';
 import style from './EditAccount.module.scss';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -76,7 +76,7 @@ const EditAccountContainer: FunctionComponent<IProps> = () => {
     }
   });
 
-  const [updateProfile, { loading: updateLoading }] = useMutation(UPDATE_PROFILE);
+  const [updateProfile, { loading: updateLoading }] = useMutation<updateProfile, updateProfileVariables>(UPDATE_PROFILE);
 
   const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>): void => {
     setState({ ...state, [prop]: event.target.value });

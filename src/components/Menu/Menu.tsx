@@ -11,14 +11,10 @@ import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 import light from '../../theme/light.theme';
 import dark from '../../theme/dark.theme';
+import { IUser } from '../../types/local';
 
 interface IProps {
-  user: {
-    fullName: string;
-    profilePhoto: string;
-    isDriving: boolean;
-    darkTheme: boolean;
-  }
+  user: IUser
 }
 
 const Menu: FunctionComponent<IProps> = ({ user }) => {

@@ -1,6 +1,6 @@
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery, useSubscription } from '@apollo/react-hooks';
 import { USER_PROFILE } from '../../shared.queries';
 import Helmet from 'react-helmet';
 import Sidebar from 'react-sidebar';
@@ -10,8 +10,15 @@ import YandexMaps from '../../components/YandexMaps';
 import { Backdrop, CircularProgress, IconButton } from '@material-ui/core';
 import style from './Home.module.scss';
 import { ACCEPT_RIDE, GET_NEARBY_DRIVERS, GET_NEARBY_RIDE, REQUEST_RIDE, SUBSCRIBE_NEARBY_RIDES } from './Home.query';
-import { acceptRide, requestRide } from '../../types/api';
+import {
+  acceptRide, acceptRideVariables, getNearbyDrivers,
+  getNearbyDrivers_GetNearbyDrivers_drivers, getNearbyRides,
+  getNearbyRides_GetNearbyRide_ride,
+  requestRide, requestRideVariables, rideStatus
+} from '../../types/api';
 import { toast } from 'react-toastify';
+import { IUser, UserDataResponse } from '../../types/local';
+import { SUBSCRIBE_RIDE_STATUS } from '../Ride/Ride.query';
 
 interface IProps extends RouteComponentProps<any> {}
 
@@ -21,32 +28,56 @@ interface IState {
   findingDriver: boolean;
 }
 
-const HomeContainer: FunctionComponent<IProps> = () => {
+const HomeContainer: FunctionComponent<IProps> = (props) => {
   const [state, setState] = useState<IState>({
     isMenuOpen: false,
     findingDriver: false,
     isDialogOpen: false
   });
+  const [user, setUser] = useState<IUser|any>(null);
+  const [drivers, setDrivers] = useState<(getNearbyDrivers_GetNearbyDrivers_drivers | null)[]|null>(null);
+  const [ride, setRide] = useState<getNearbyRides_GetNearbyRide_ride|null>(null);
+  const [isDriving, setDriving] = useState<boolean>(false);
+  const [rideId, setRideId] = useState<number|null>(null);
 
-  const { loading: loadingUser, data: userData } = useQuery(USER_PROFILE);
+  const { loading: loadingUser, data: userData } = useQuery<UserDataResponse>(USER_PROFILE);
+  useEffect(() => {
+    if (userData && userData.GetMyProfile) {
+      const { user } = userData.GetMyProfile;
+      if (user) {
+        setUser(user);
+        if (user.isDriving) {
+          setDriving(user.isDriving);
+        }
+      }
+    }
+  }, [userData]);
 
-  const { loading: loadingDrivers, data: driversData } = useQuery(GET_NEARBY_DRIVERS, {
+  const { loading: loadingDrivers, data: driversData } = useQuery<getNearbyDrivers>(GET_NEARBY_DRIVERS, {
     skip: !userData,
     pollInterval: 2000
   });
+  useEffect(() => {
+    if (driversData && driversData.GetNearbyDrivers) {
+      const { drivers } = driversData.GetNearbyDrivers;
+      if (drivers) {
+        setDrivers(drivers)
+      }
+    }
+  }, [driversData]);
 
   const {
     loading: loadingGetRide,
     data: rideData,
     subscribeToMore: rideSubscription
-  } = useQuery(GET_NEARBY_RIDE, {
-    skip: !driversData && !userData,
+  } = useQuery<getNearbyRides>(GET_NEARBY_RIDE, {
+    skip: !isDriving,
     onCompleted: data => {
       const { GetNearbyRide } = data;
       if (GetNearbyRide.ok) {
         rideSubscription({
           document: SUBSCRIBE_NEARBY_RIDES,
-          updateQuery: (prev, { subscriptionData }) => {
+          updateQuery: (prev, { subscriptionData }: any) => {
             if (!subscriptionData.data) {
               return prev;
             }
@@ -57,13 +88,45 @@ const HomeContainer: FunctionComponent<IProps> = () => {
               }
             });
           }
-        })
+        });
+      } else {
+        toast.error(GetNearbyRide.error);
       }
     }
   });
+  useEffect(() => {
+    if (rideData && rideData.GetNearbyRide) {
+      const { ride } = rideData.GetNearbyRide;
+      if (ride) {
+        setRide(ride);
+      }
+    }
+  }, [rideData, rideSubscription, loadingGetRide]);
 
-  const [requestRide, { loading: loadingRide }] = useMutation(REQUEST_RIDE);
-  const [acceptRide] = useMutation(ACCEPT_RIDE);
+  const [requestRide, { loading: loadingRide }] = useMutation<requestRide, requestRideVariables>(REQUEST_RIDE);
+  const [acceptRide] = useMutation<acceptRide, acceptRideVariables>(ACCEPT_RIDE);
+
+  const { loading: loadingRideStatus, data: rideStatusData } = useSubscription<rideStatus>(SUBSCRIBE_RIDE_STATUS, {
+    variables: {
+      rideId: rideId
+    },
+    onSubscriptionData: ({ subscriptionData }) => {
+      if (!subscriptionData.data) {
+        return
+      }
+      console.log(rideId);
+      if (rideId) {
+        const { RideStatusSubscription } = subscriptionData.data;
+        if (RideStatusSubscription) {
+          if (RideStatusSubscription.id === rideId) {
+            if (RideStatusSubscription.status === 'ACCEPTED') {
+              props.history.push(`/ride/${RideStatusSubscription.id}`);
+            }
+          }
+        }
+      }
+    }
+  });
 
   const toggleMenu = (): void => {
     setState({ ...state, isMenuOpen: !state.isMenuOpen })
@@ -89,7 +152,10 @@ const HomeContainer: FunctionComponent<IProps> = () => {
         const data: requestRide = result.data;
         const { RequestRide } = data;
         if (RequestRide.ok) {
-          setState({ ...state, findingDriver: true })
+          setState({ ...state, findingDriver: true });
+          if (RequestRide.ride) {
+            setRideId(RequestRide.ride.id);
+          }
         } else {
           toast.error(RequestRide.error);
         }
@@ -106,7 +172,13 @@ const HomeContainer: FunctionComponent<IProps> = () => {
         const data: acceptRide = result.data;
         const { UpdateRideStatus } = data;
         if (UpdateRideStatus.ok) {
-          toast.success('accept')
+          const { history } = props;
+          history.push({
+            pathname: `/ride/${UpdateRideStatus.rideId}`,
+            state: {
+              rideId
+            }
+          })
         } else {
           toast.error(UpdateRideStatus.error)
         }
@@ -119,9 +191,9 @@ const HomeContainer: FunctionComponent<IProps> = () => {
       <Helmet>
         <title>Home | Muber</title>
       </Helmet>
-      { !loadingUser && userData.GetMyProfile.user &&
+      { !loadingUser && user &&
         <Sidebar
-          sidebar={<Menu user={userData.GetMyProfile.user} />}
+          sidebar={<Menu user={user} />}
           open={state.isMenuOpen}
           onSetOpen={toggleMenu}
           styles={{
@@ -135,13 +207,13 @@ const HomeContainer: FunctionComponent<IProps> = () => {
           <IconButton onClick={toggleMenu} className={style.MenuIcon}>
             <MenuIcon />
           </IconButton>
-          { !loadingUser && !loadingDrivers && !loadingGetRide &&
+          { user && drivers &&
             <YandexMaps
-              user={userData.GetMyProfile.user}
-              drivers={driversData.GetNearbyDrivers.drivers}
-              isDriving={userData.GetMyProfile.user.isDriving}
+              user={user}
+              drivers={drivers}
+              isDriving={isDriving}
               findingDrivers={state.findingDriver}
-              nearbyRide={rideData.GetNearbyRide.ride}
+              nearbyRide={ride}
               pickButton={{ label: 'Pick Address' }}
               requestRide={(event, payload) => handleRequestRide(event, payload)}
               acceptRide={handleAcceptRide}

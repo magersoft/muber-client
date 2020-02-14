@@ -5,7 +5,7 @@ import BackArrow from '../../components/BlackArrow';
 import style from './SocialLogin.module.scss';
 import { useMutation } from '@apollo/react-hooks';
 import { FACEBOOK_CONNECT } from './SocialLogin.query';
-import { facebookConnect } from '../../types/api';
+import { facebookConnect, facebookConnectVariables } from '../../types/api';
 import { RouteComponentProps } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { LOG_USER_IN } from '../../shared.queries';
@@ -14,7 +14,7 @@ import Loader from '../../components/Loader';
 interface IProps extends RouteComponentProps<any> {}
 
 const SocialLoginContainer: FunctionComponent<IProps> = () => {
-  const [facebookLogin, { loading }] = useMutation<facebookConnect>(FACEBOOK_CONNECT);
+  const [facebookLogin, { loading }] = useMutation<facebookConnect, facebookConnectVariables>(FACEBOOK_CONNECT);
   const [logUserIn] = useMutation(LOG_USER_IN);
 
   const facebookLoginHandler = (fbData): void => {
