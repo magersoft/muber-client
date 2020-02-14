@@ -13,6 +13,7 @@ import Ride from '../../routes/Ride';
 import Settings from '../../routes/Settings';
 import SocialLogin from '../../routes/SocialLogin';
 import VerifyPhone from '../../routes/VerifyPhone';
+import Chat from '../../routes/Chat';
 
 interface IProps {
   isLoggedIn: boolean;
@@ -37,6 +38,7 @@ const LoggedInRoutes: FunctionComponent = () => (
   <Switch>
     <Route path={'/'} exact={true} component={Home} />
     <Route path={'/ride/:rideId'} component={Ride} />
+    <Route path={'/chat/:chatId'} component={Chat} />
     <Route path={'/edit-account'} component={EditAccount} />
     <Route path={'/settings'} component={Settings} />
     <Route path={'/places'} component={Places} />

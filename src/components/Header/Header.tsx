@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const Header: FunctionComponent<IProps> = ({ title, backTo }) => (
-  <AppBar position="static">
+  <AppBar position="fixed">
     <Toolbar>
       { backTo && <BackArrow backTo={backTo} /> }
       <Typography variant="h6" className={style.Header}>

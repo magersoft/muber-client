@@ -36,7 +36,10 @@ const RideContainer: FunctionComponent<IProps> = ({ match, history }) => {
             if (!subscriptionData.data) {
               return prev;
             }
-            return
+            const { data: { RideStatusSubscription: { status } } } = subscriptionData;
+            if (status === 'FINISHED') {
+              window.location.href = '/'
+            }
           }
         })
       } else {
@@ -56,7 +59,6 @@ const RideContainer: FunctionComponent<IProps> = ({ match, history }) => {
   useEffect(() => {
     if (userData && userData.GetMyProfile) {
       setUser(userData.GetMyProfile.user);
-      console.log(userData);
     }
   }, [userData]);
 
@@ -68,7 +70,7 @@ const RideContainer: FunctionComponent<IProps> = ({ match, history }) => {
         rideId,
         status
       },
-      refetchQueries: [{ query: GET_RIDE }]
+      refetchQueries: [{ query: GET_RIDE, variables: { rideId } }]
     })
   };
 
@@ -118,27 +120,31 @@ const RideContainer: FunctionComponent<IProps> = ({ match, history }) => {
             <h4>Status</h4>
             <span>{ ride.status }</span>
           </div>
-          { ride.driver.id === user.id &&
-            ride.status === 'ACCEPTED' && (
-            <Button label="Picked Up" onClick={() => handleUpdateRideStatus({
-              rideId: ride.id,
-              status: 'ONROUTE'
-            })} />
-          )}
-          { ride.driver.id === user.id &&
-            ride.status === 'ONROUTE' && (
-            <Button label="Finished" onClick={() => handleUpdateRideStatus({
-              rideId: ride.id,
-              status: 'FINISHED'
-            })} />
-          )}
-          { ride.driver.id === user.id ||
-            (ride.passenger.id === user.id) &&
-            ride.status === 'ACCEPTED' && (
-            <Link to={`/chat/${ride.chatId}`}>
-              <Button label="Chat" />
-            </Link>
-          )}
+          <div className={style.Buttons}>
+            { ride.driver.id === user.id &&
+              ride.status === 'ACCEPTED' && (
+              <Button label="Picked Up" onClick={() => handleUpdateRideStatus({
+                rideId: ride.id,
+                status: 'ONROUTE'
+              })} />
+            )}
+            { ride.driver.id === user.id &&
+              ride.status === 'ONROUTE' && (
+              <Button label="Finished" onClick={() => handleUpdateRideStatus({
+                rideId: ride.id,
+                status: 'FINISHED'
+              })} />
+            )}
+            { ride.status !== 'REQUESTING' && (
+              <Link to={{ pathname: `/chat/${ride.chatId}`, state: { rideId: ride.id } }}>
+                <Button
+                  label={
+                    ride.driver.id === user.id ? 'Chat with Passenger' : 'Chat with Driver'
+                  }
+                />
+              </Link>
+            )}
+          </div>
         </div>
       }
       <Backdrop className={style.Backdrop} open={loadingRide || loadingUser} timeout={0}>

@@ -106,7 +106,7 @@ const HomeContainer: FunctionComponent<IProps> = (props) => {
   const [requestRide, { loading: loadingRide }] = useMutation<requestRide, requestRideVariables>(REQUEST_RIDE);
   const [acceptRide] = useMutation<acceptRide, acceptRideVariables>(ACCEPT_RIDE);
 
-  const { loading: loadingRideStatus, data: rideStatusData } = useSubscription<rideStatus>(SUBSCRIBE_RIDE_STATUS, {
+  const { loading: loadingRideStatus } = useSubscription<rideStatus>(SUBSCRIBE_RIDE_STATUS, {
     variables: {
       rideId: rideId
     },
@@ -114,7 +114,7 @@ const HomeContainer: FunctionComponent<IProps> = (props) => {
       if (!subscriptionData.data) {
         return
       }
-      console.log(rideId);
+
       if (rideId) {
         const { RideStatusSubscription } = subscriptionData.data;
         if (RideStatusSubscription) {
@@ -221,7 +221,17 @@ const HomeContainer: FunctionComponent<IProps> = (props) => {
           }
         </Sidebar>
       }
-      <Backdrop className={style.Backdrop} open={loadingUser || loadingDrivers || loadingRide || loadingGetRide} timeout={0}>
+      <Backdrop
+        className={style.Backdrop}
+        open={
+          loadingUser ||
+          loadingDrivers ||
+          loadingRide ||
+          loadingGetRide ||
+          loadingRideStatus
+        }
+        timeout={0}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
     </div>
