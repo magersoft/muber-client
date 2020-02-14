@@ -9,7 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import YandexMaps from '../../components/YandexMaps';
 import { Backdrop, CircularProgress, IconButton } from '@material-ui/core';
 import style from './Home.module.scss';
-import { ACCEPT_RIDE, GET_NEARBY_DRIVERS, GET_NEARBY_RIDE, REQUEST_RIDE } from './Home.query';
+import { ACCEPT_RIDE, GET_NEARBY_DRIVERS, GET_NEARBY_RIDE, REQUEST_RIDE, SUBSCRIBE_NEARBY_RIDES } from './Home.query';
 import { acceptRide, requestRide } from '../../types/api';
 import { toast } from 'react-toastify';
 
@@ -35,8 +35,31 @@ const HomeContainer: FunctionComponent<IProps> = () => {
     pollInterval: 2000
   });
 
-  const { loading: loadingGetRide, data: rideData } = useQuery(GET_NEARBY_RIDE, {
-    skip: !driversData
+  const {
+    loading: loadingGetRide,
+    data: rideData,
+    subscribeToMore: rideSubscription
+  } = useQuery(GET_NEARBY_RIDE, {
+    skip: !driversData && !userData,
+    onCompleted: data => {
+      const { GetNearbyRide } = data;
+      if (GetNearbyRide.ok) {
+        rideSubscription({
+          document: SUBSCRIBE_NEARBY_RIDES,
+          updateQuery: (prev, { subscriptionData }) => {
+            if (!subscriptionData.data) {
+              return prev;
+            }
+            return Object.assign({}, prev, {
+              GetNearbyRide: {
+                ...prev.GetNearbyRide,
+                ride: subscriptionData.data.NearbyRideSubscription
+              }
+            });
+          }
+        })
+      }
+    }
   });
 
   const [requestRide, { loading: loadingRide }] = useMutation(REQUEST_RIDE);

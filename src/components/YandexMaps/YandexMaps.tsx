@@ -21,6 +21,8 @@ import { WhereToVote, WhereToVoteOutlined } from '@material-ui/icons';
 import { useMutation } from '@apollo/react-hooks';
 import { REPORT_LOCATION } from '../../routes/Home/Home.query';
 import CarImage from '../../images/carBlack.svg';
+import Popup from '../Popup';
+import { distancePipe, durationPipe } from '../../utils/pipes';
 
 // Price for one km in ruble
 const PRICE_FOR_ONE_KM = 12;
@@ -29,19 +31,6 @@ interface IDriver {
   id: number;
   lastLat: number;
   lastLng: number;
-}
-
-interface IRide {
-  id: number;
-  pickUpAddress: string;
-  dropOffAddress: string;
-  price: number;
-  distance: number;
-  duration: number;
-  passenger: {
-    fullName: string;
-    profilePhoto: string;
-  }
 }
 
 interface IProps {
@@ -58,7 +47,7 @@ interface IProps {
   requestRide?: any;
   acceptRide?: any;
   findingDrivers?: boolean;
-  nearbyRide?: IRide;
+  nearbyRide?: any;
 }
 
 interface IState {
@@ -370,41 +359,7 @@ const YandexMaps: FunctionComponent<IProps> = (
           <div className={style.FindingDriver}>Finding a driver ...</div>
         }
         { isDriving && nearbyRide &&
-          <Dialog aria-labelledby="customized-dialog-title" fullWidth open={isDriving}>
-            <DialogTitle id="customized-dialog-title">
-              New request a Ride
-            </DialogTitle>
-            <DialogContent dividers>
-              <div>
-                <h4>Pick Up Address</h4>
-                <span>{ nearbyRide.pickUpAddress }</span>
-              </div>
-              <div>
-                <h4>Drop Off Address</h4>
-                <span>{ nearbyRide.dropOffAddress }</span>
-              </div>
-              <div>
-                <h4>Price</h4>
-                <span>{ nearbyRide.price }</span>
-              </div>
-              <div>
-                <h4>Distance</h4>
-                <span>{ nearbyRide.distance }</span>
-              </div>
-              <div>
-                <h4>Duration</h4>
-                <span>{ nearbyRide.duration }</span>
-              </div>
-              <div>
-                <h4>Passenger</h4>
-                <Avatar alt="Remy Sharp" src={nearbyRide.passenger.profilePhoto} className={style.Avatar} />
-                <span>{ nearbyRide.passenger.fullName }</span>
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button label="Accept Ride" onClick={(event) => onAcceptRide(event, nearbyRide.id)} />
-            </DialogActions>
-          </Dialog>
+          <Popup ride={nearbyRide} open={isDriving} onAcceptRide={(event, rideId) => onAcceptRide(event, rideId)}/>
         }
         <Map
           state={{
@@ -478,8 +433,8 @@ const YandexMaps: FunctionComponent<IProps> = (
               {
                 (state.distance && state.duration && state.price) &&
                 <div className={style.RoutePrice}>
-                  <div>Distance: <span>{ Math.round(state.distance / 1000) } km</span></div>
-                  <div>Duration: <span>{ Math.floor(state.duration / 60) } min</span></div>
+                  <div>Distance: <span>{ distancePipe(state.distance) }</span></div>
+                  <div>Duration: <span>{ durationPipe(state.duration) }</span></div>
                   <hr/>
                   <div className={style.Price}>{ state.price } ₽</div>
                 </div>
