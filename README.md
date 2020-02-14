@@ -15,19 +15,19 @@ Learning and practice on really project
 
 ### Logged In:
 
-- [ ] Home
-- [ ] Ride
+- [x] Home
+- [x] Ride
 - [x] Edit Account
 - [x] Settings
 - [x] Add Place
 - [x] Find Address
-- [ ] Challenge: Ride History
+- [ ] Email Sign In
+- [ ] Ride History
     
 ### Awesome
 
 - [ ] Material UI
 - [ ] Dark Theme
-- [ ] Route Animation
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
