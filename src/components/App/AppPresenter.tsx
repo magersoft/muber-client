@@ -21,7 +21,9 @@ interface IProps {
 
 const AppPresenter: FunctionComponent<IProps> = ({ isLoggedIn }) =>
   <BrowserRouter>
+    <div className="Layout">
     { isLoggedIn ? <LoggedInRoutes /> : <LoggedOutRoutes /> }
+    </div>
   </BrowserRouter>;
 
 const LoggedOutRoutes: FunctionComponent = () => (

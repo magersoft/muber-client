@@ -223,13 +223,7 @@ const HomeContainer: FunctionComponent<IProps> = (props) => {
       }
       <Backdrop
         className={style.Backdrop}
-        open={
-          loadingUser ||
-          loadingDrivers ||
-          loadingRide ||
-          loadingGetRide ||
-          loadingRideStatus
-        }
+        open={loadingUser || loadingDrivers || loadingRide || loadingGetRide}
         timeout={0}
       >
         <CircularProgress color="inherit" />

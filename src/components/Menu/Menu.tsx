@@ -6,11 +6,8 @@ import { TOGGLE_DRIVING_MODE, TOGGLE_THEME_MODE } from './Menu.query';
 import { USER_PROFILE } from '../../shared.queries';
 import { toggleDrivingMode, toggleThemeMode } from '../../types/api';
 import { toast } from 'react-toastify';
-import ThemeSwitcher from 'react-css-vars';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
-import light from '../../theme/light.theme';
-import dark from '../../theme/dark.theme';
 import { IUser } from '../../types/local';
 
 interface IProps {
@@ -93,12 +90,11 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
       <div className={style.ThemeSwitcher}>
         <Toggle
           id="theme-switcher"
-          defaultChecked={!darkTheme}
+          defaultChecked={darkTheme}
           onChange={darkModeHandler}
         />
         <label htmlFor="theme-switcher">Dark Mode</label>
       </div>
-      <ThemeSwitcher theme={darkTheme ? light : dark} />
     </div>
   )
 };

@@ -8,7 +8,14 @@ body {
 }
 
 #root {
-  margin-top: 56px;
+  position: relative;
+  width: 480px;
+  height: 100vh;
+  margin: 0 auto;
+
+  @media screen and (max-width: 991px) {
+    width: 100%;
+  }
 }
 
 a {
@@ -18,6 +25,15 @@ a {
 
 button {
   outline: none;
+}
+
+.Layout {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  box-shadow: 0px 14px 4px -1px rgba(0,0,0,0.2), 0px 4px 5px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.12);
 }
 
 //[class*="ymaps-2"][class*="-ground-pane"] {
