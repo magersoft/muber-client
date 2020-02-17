@@ -8,6 +8,8 @@ import { WebSocketLink } from 'apollo-link-ws';
 import { getMainDefinition } from 'apollo-utilities';
 import { toast } from 'react-toastify';
 
+const isDev = process.env.NODE_ENV === 'development';
+
 const getToken = (): string | undefined => {
   const token = localStorage.getItem('jwt');
   if (token) {
@@ -29,7 +31,7 @@ const authMiddleware = new ApolloLink((operation: Operation, forward: any) => {
 });
 
 const httpLink = new HttpLink({
-  uri: 'http://localhost:4000/graphql'
+  uri: isDev ? 'http://localhost:4000/graphql' : 'https://muber-server.herokuapp.com/graphql'
 });
 
 const wsLink = new WebSocketLink({
@@ -39,7 +41,7 @@ const wsLink = new WebSocketLink({
     },
     reconnect: true
   },
-  uri: 'ws://localhost:4000/subscription'
+  uri: isDev ? 'ws://localhost:4000/subscription' : 'ws://muber-server.herokuapp.com/subscription'
 });
 
 const combinedLinks = split(({ query }) => {
