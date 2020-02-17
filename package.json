@@ -2,6 +2,7 @@
   "name": "muber-client",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://magersoft.github.io/muber-client/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -72,6 +73,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "homepage": "https://magersoft.github.io/muber-client/"
+  }
 }
