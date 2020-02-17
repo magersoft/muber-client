@@ -1,8 +1,14 @@
 # (M)Uber clone on React.js, Apollo, TypeScript (Client)
 
+[DEMO](https://muber-client.herokuapp.com/) (Working without SSL - load unsafe script)
+
 [Go to backend repository](https://github.com/magersoft/muber-server)
 
 Learning and practice on really project
+
+## Demo
+* If after authorized your location in ocean, allow your location in Browser
+* You can change you location in DevTools 
 
 ## Screens:
 
