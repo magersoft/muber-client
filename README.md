@@ -33,7 +33,7 @@ Learning and practice on really project
 ### Awesome
 
 - [ ] Material UI
-- [ ] Dark Theme
+- [x] Dark Theme
 ---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

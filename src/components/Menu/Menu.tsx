@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import Toggle from 'react-toggle';
 import 'react-toggle/style.css';
 import { IUser } from '../../types/local';
+import { THEME_MODE } from '../App/AppQueries';
 
 interface IProps {
   user: IUser
@@ -74,7 +75,14 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
           </Link>
           <span className={style.About}>
             <h2>{ fullName }</h2>
-            <h5>4.5</h5>
+            <div className={style.ThemeSwitcher}>
+            <Toggle
+              id="theme-switcher"
+              defaultChecked={darkTheme}
+              onChange={darkModeHandler}
+            />
+            <label htmlFor="theme-switcher">Dark Mode</label>
+          </div>
           </span>
         </div>
       </div>
@@ -87,14 +95,6 @@ const Menu: FunctionComponent<IProps> = ({ user }) => {
       >
         { isDriving ? 'Stop Driving' : 'Start Driving' }
       </button>
-      <div className={style.ThemeSwitcher}>
-        <Toggle
-          id="theme-switcher"
-          defaultChecked={darkTheme}
-          onChange={darkModeHandler}
-        />
-        <label htmlFor="theme-switcher">Dark Mode</label>
-      </div>
     </div>
   )
 };

@@ -5,12 +5,16 @@
 }
 
 .SendField {
-  background-color: white;
   position: fixed;
   width: 480px;
   margin: 0 auto;
   bottom: 0;
   left: 0;
   right: 0;
+  background-color: var(--mainBackground);
   padding: 2rem;
+
+  input, svg, label {
+    color: var(--mainColor);
+  }
 }

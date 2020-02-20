@@ -48,12 +48,17 @@
 }
 
 .AboutRoute {
-  display: flex;
-  flex-direction: column;
-  margin: 2rem;
+  background-color: var(--mainBackground);
 
-  > div {
-    padding-bottom: 1rem;
+  .Container {
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+
+    > div:not(input) {
+      padding-bottom: 1rem;
+      color: var(--mainColor);
+    }
   }
 }
 

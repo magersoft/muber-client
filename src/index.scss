@@ -28,7 +28,9 @@ body {
 }
 
 .MuiDialog-paperWidthSm {
-  max-width: 420px;
+  max-width: 420px!important;
+  color: var(--mainColor)!important;
+  background-color: var(--mainBackground)!important;
 }
 
 a {
@@ -53,3 +55,7 @@ button {
 //  -webkit-filter: grayscale(100%) url(/path-to-svg/yellowfilter.svg#yellowfilter);
 //  filter: grayscale(100%) url(/path-to-svg/yellowfilter.svg#yellowfilter);
 //}
+
+[class*="ymaps-2"][class*="-search__suggest"] {
+  background-color: var(--mainBackground);
+}

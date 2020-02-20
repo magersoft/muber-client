@@ -396,40 +396,42 @@ const YandexMaps: FunctionComponent<IProps> = (
           }
           <Drawer anchor="bottom" open={state.drawer} onClose={() => setState({ ...state, drawer: false })}>
             <div className={style.AboutRoute}>
-              <TextField
-                label="From Place"
-                value={state.address}
-                fullWidth
-                disabled
-                InputProps={{
-                  startAdornment:
-                    <InputAdornment position="start">
-                      <WhereToVoteOutlined />
-                    </InputAdornment>
-                }}
-              />
-              <TextField
-                label="To Place"
-                value={state.toAddress}
-                fullWidth
-                disabled
-                InputProps={{
-                  startAdornment:
-                    <InputAdornment position="start">
-                      <WhereToVote />
-                    </InputAdornment>
-                }}
-              />
-              {
-                (state.distance && state.duration && state.price) &&
-                <div className={style.RoutePrice}>
-                  <div>Distance: <span>{ distancePipe(state.distance) }</span></div>
-                  <div>Duration: <span>{ durationPipe(state.duration) }</span></div>
-                  <hr/>
-                  <div className={style.Price}>{ state.price } ₽</div>
-                </div>
-              }
-              <Button label="Request a ride" onClick={onRequestRide} />
+              <div className={style.Container}>
+                <TextField
+                  label="From Place"
+                  value={state.address}
+                  fullWidth
+                  disabled
+                  InputProps={{
+                    startAdornment:
+                      <InputAdornment position="start">
+                        <WhereToVoteOutlined />
+                      </InputAdornment>
+                  }}
+                />
+                <TextField
+                  label="To Place"
+                  value={state.toAddress}
+                  fullWidth
+                  disabled
+                  InputProps={{
+                    startAdornment:
+                      <InputAdornment position="start">
+                        <WhereToVote />
+                      </InputAdornment>
+                  }}
+                />
+                {
+                  (state.distance && state.duration && state.price) &&
+                  <div className={style.RoutePrice}>
+                    <div>Distance: <span>{ distancePipe(state.distance) }</span></div>
+                    <div>Duration: <span>{ durationPipe(state.duration) }</span></div>
+                    <hr/>
+                    <div className={style.Price}>{ state.price } ₽</div>
+                  </div>
+                }
+                <Button label="Request a ride" onClick={onRequestRide} />
+              </div>
             </div>
           </Drawer>
         </Map>
