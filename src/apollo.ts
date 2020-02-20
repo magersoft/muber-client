@@ -72,7 +72,7 @@ const localStateLink = withClientState({
     Mutation: {
       logUserIn: (_, { token }, { cache: appCache }) => {
         localStorage.setItem('jwt', token);
-        appCache.writeDate({
+        appCache.writeData({
           data: {
             auth: {
               __typename: 'Auth',

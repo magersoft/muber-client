@@ -51,7 +51,7 @@
 }
 
 .FakeInput {
-  margin: 30px 0;
+  margin: 20px 0;
   font-size: 25px;
   font-weight: 300;
 }
@@ -67,10 +67,11 @@
 
 .SocialLogin {
   border-top: 1px solid var(--greyColor);
-  padding: 30px 20px;
+  padding: 20px;
 }
 
 .SocialLink {
+  display: flex;
   color: var(--blueColor);
   font-size: 20px;
 }

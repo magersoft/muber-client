@@ -30,11 +30,10 @@ const LoginContainer: FunctionComponent<IProps> = () => (
         </div>
       </div>
       </Link>
-      <Link to={'social-login'} >
-        <div className={style.SocialLogin}>
-        <div className={style.SocialLink}>Or connect with social</div>
+      <div className={style.SocialLogin}>
+        <Link to={'social-login'} className={style.SocialLink}>Or connect with social</Link>
+        <Link to={'email'} className={style.SocialLink}>Or SignIn/SingUp email</Link>
       </div>
-      </Link>
     </div>
   </div>
 );

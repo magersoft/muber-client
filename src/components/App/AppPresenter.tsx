@@ -12,6 +12,7 @@ import Places from '../../routes/Places';
 import Ride from '../../routes/Ride';
 import Settings from '../../routes/Settings';
 import SocialLogin from '../../routes/SocialLogin';
+import Email from '../../routes/Email';
 import VerifyPhone from '../../routes/VerifyPhone';
 import Chat from '../../routes/Chat';
 
@@ -32,6 +33,7 @@ const LoggedOutRoutes: FunctionComponent = () => (
     <Route path={'/phone-login'} component={PhoneLogin} />
     <Route path={'/verify-phone'} component={VerifyPhone} />
     <Route path={'/social-login'} component={SocialLogin} />
+    <Route path={'/email'} component={Email} />
     <Redirect from={'*'} to={'/'} />
   </Switch>
 );

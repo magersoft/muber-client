@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -18,6 +19,7 @@ export interface toggleDrivingMode {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -36,6 +38,7 @@ export interface toggleThemeMode {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -60,6 +63,7 @@ export interface editPlaceVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -86,6 +90,7 @@ export interface addPlaceVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -125,6 +130,7 @@ export interface getChatVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -157,6 +163,7 @@ export interface sendMessageVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -177,6 +184,7 @@ export interface messageSubscription {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -204,6 +212,56 @@ export interface updateProfileVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: existUser
+// ====================================================
+
+export interface existUser_RequestEmailExist {
+  __typename: "RequestEmailExistResponse";
+  ok: boolean;
+  error: string | null;
+  exist: boolean;
+}
+
+export interface existUser {
+  RequestEmailExist: existUser_RequestEmailExist;
+}
+
+export interface existUserVariables {
+  email: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: emailSingIn
+// ====================================================
+
+export interface emailSingIn_EmailSignIn {
+  __typename: "EmailSignInResponse";
+  ok: boolean;
+  error: string | null;
+  token: string | null;
+}
+
+export interface emailSingIn {
+  EmailSignIn: emailSingIn_EmailSignIn;
+}
+
+export interface emailSingInVariables {
+  email: string;
+  password: string;
+}
+
+/* tslint:disable */
+/* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -227,6 +285,7 @@ export interface reportMovementVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -253,6 +312,7 @@ export interface getNearbyDrivers {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -289,6 +349,7 @@ export interface requestRideVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -325,6 +386,7 @@ export interface getNearbyRides {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -348,6 +410,7 @@ export interface acceptRideVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -377,6 +440,7 @@ export interface nearbyRides {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -399,6 +463,7 @@ export interface startPhoneVerificationVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -450,6 +515,7 @@ export interface getRideVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -490,6 +556,7 @@ export interface rideStatus {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -514,6 +581,7 @@ export interface updateRideVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -540,6 +608,7 @@ export interface facebookConnectVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -564,6 +633,7 @@ export interface completePhoneVerificationVariables {
 
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 //==============================================================

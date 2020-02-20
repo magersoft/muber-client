@@ -1,0 +1,7 @@
+.Email {
+  padding: 40px;
+
+  :global(.MuiTextField-root) {
+    margin-bottom: 20px;
+  }
+}
