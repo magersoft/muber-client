@@ -7,10 +7,19 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { RouteComponentProps } from 'react-router-dom';
 import is from 'is_js';
 import { useMutation } from '@apollo/react-hooks';
-import { EMAIL_SIGN_IN, EXIST_USER } from './Email.query';
-import { emailSingIn, emailSingInVariables, existUser, existUserVariables } from '../../types/api';
+import { EMAIL_SIGN_IN, EMAIL_SIGN_UP, EXIST_USER } from './Email.query';
+import {
+  emailSignUp,
+  emailSignUpVariables,
+  emailSingIn,
+  emailSingInVariables,
+  existUser,
+  existUserVariables
+} from '../../types/api';
 import { toast } from 'react-toastify';
 import { LOG_USER_IN } from '../../shared.queries';
+import PhotoInput from '../../components/PhotoInput';
+import axios from 'axios';
 
 interface IProps extends RouteComponentProps<any> {}
 
@@ -22,8 +31,9 @@ interface IState {
   firstName: string;
   lastName: string;
   profilePhoto: string;
-  age: number|null;
+  age: number;
   phoneNumber: string;
+  uploading: boolean;
 }
 
 const EmailContainer: FunctionComponent<IProps> = () => {
@@ -35,13 +45,15 @@ const EmailContainer: FunctionComponent<IProps> = () => {
     firstName: '',
     lastName: '',
     profilePhoto: '',
-    age: null,
-    phoneNumber: ''
+    age: 0,
+    phoneNumber: '',
+    uploading: false
   });
 
   const [existUser, { loading: loadingFoundingUser }] = useMutation<existUser, existUserVariables>(EXIST_USER);
   const [logUserIn] = useMutation(LOG_USER_IN);
   const [signIn, { loading: loadingSignIn }] = useMutation<emailSingIn, emailSingInVariables>(EMAIL_SIGN_IN);
+  const [signUp, { loading: loadingSignUp }] = useMutation<emailSignUp, emailSignUpVariables>(EMAIL_SIGN_UP);
 
   const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [prop]: event.target.value })
@@ -72,9 +84,35 @@ const EmailContainer: FunctionComponent<IProps> = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    const { email, password, firstName, lastName, phoneNumber, profilePhoto, age } = state;
     if (state.newUser) {
-      console.log('register new user')
+      signUp({
+        variables: {
+          email,
+          password,
+          firstName,
+          lastName,
+          profilePhoto,
+          age: +age,
+          phoneNumber
+        },
+        update: (_, result: any) => {
+          const data: emailSignUp = result.data;
+          const { EmailSignUp } = data;
+          if (EmailSignUp.ok) {
+            const token = EmailSignUp.token;
+            if (token) {
+              logUserIn({
+                variables: {
+                  token
+                }
+              })
+            }
+          } else {
+            toast.error(EmailSignUp.error);
+          }
+        }
+      });
     } else {
       signIn({
         variables: {
@@ -98,6 +136,23 @@ const EmailContainer: FunctionComponent<IProps> = () => {
           }
         }
       })
+    }
+  };
+
+  const uploadPhoto: React.ChangeEventHandler<HTMLInputElement> = async (event) => {
+    const { target: { files } } = event;
+    if (files) {
+      setState({ uploading: true, ...state });
+      const formData = new FormData();
+      formData.append('file', files[0]);
+      formData.append('api_key', '754293116941949');
+      formData.append('upload_preset', 'sed4duz5');
+      formData.append('timestamp', String(Date.now() / 1000));
+      const { data: { secure_url } } = await axios.post('https://api.cloudinary.com/v1_1/magersoft/image/upload', formData);
+      if (secure_url) {
+        setState({ uploading: false, ...state });
+        setState({ ...state, profilePhoto: secure_url });
+      }
     }
   };
 
@@ -161,6 +216,11 @@ const EmailContainer: FunctionComponent<IProps> = () => {
             fullWidth
             value={state.age}
             onChange={handleChange('age')}
+          />
+          <PhotoInput
+            uploading={state.uploading}
+            fileUrl={state.profilePhoto}
+            onChange={uploadPhoto}
           />
         </React.Fragment>
       }
