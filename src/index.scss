@@ -18,6 +18,19 @@ body {
   }
 }
 
+.MuiPaper-root {
+  width: 480px;
+  margin: 0 auto;
+
+  @media screen and (max-width: 991px) {
+    width: 100%;
+  }
+}
+
+.MuiDialog-paperWidthSm {
+  max-width: 420px;
+}
+
 a {
   color: inherit;
   text-decoration: none;
